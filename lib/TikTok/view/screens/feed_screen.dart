@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tiktok_clone/TikTok/controller/post_controller.dart';
+import 'package:tiktok_clone/TikTok/controller/profile_controller.dart';
+import 'package:tiktok_clone/TikTok/model/user.dart';
 import 'package:tiktok_clone/TikTok/view/screens/create_post_screen.dart';
 import 'package:tiktok_clone/TikTok/view/widgets/button.dart';
 import 'package:tiktok_clone/TikTok/view/widgets/post_widget.dart';
@@ -9,6 +11,7 @@ class FeedScreen extends StatelessWidget {
   FeedScreen({super.key});
 
   final PostController postController = Get.put(PostController());
+  final ProfileController profileController = Get.put(ProfileController());
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +34,7 @@ class FeedScreen extends StatelessWidget {
                             width: 35,
                             height: 35,
                             child: Image.network(
-                              'https://firebasestorage.googleapis.com/v0/b/oyes-63857.appspot.com/o/profilePics%2FFAfBzyJJEkRQOQRYFFeezEglcJr2?alt=media&token=8a166954-1144-4c79-992b-6b443d7b2ddb',
+                              profileController.user['profilePic'] ?? "https://st3.depositphotos.com/1767687/16607/v/450/depositphotos_166074422-stock-illustration-default-avatar-profile-icon-grey.jpg",
                               fit: BoxFit.cover,
                             ),
                           ),
