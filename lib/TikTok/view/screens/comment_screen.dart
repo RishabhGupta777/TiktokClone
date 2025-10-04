@@ -6,9 +6,11 @@ import 'package:tiktok_clone/TikTok/view/widgets/text_input.dart';
 import 'package:timeago/timeago.dart' as tago;
 class CommentScreen extends StatelessWidget {
   final String id;
+  final String whereCommentStores;
   final ScrollController ? scrollController;
   final DraggableScrollableController  draggableController ;
   CommentScreen({
+    required this.whereCommentStores,
       required this.id,
       required this.scrollController,
     required this.draggableController
@@ -22,7 +24,7 @@ class CommentScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    commentController.updatePostID(id);
+    commentController.updatePostID(whereCommentStores,id);
     return ClipRRect(
       borderRadius: BorderRadius.only(
         topLeft: Radius.circular(25.0),

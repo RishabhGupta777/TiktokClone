@@ -8,12 +8,14 @@ class CommentController extends GetxController{
   final Rx<List<Comment>> _comments = Rx<List<Comment>>([]);
   List<Comment> get comments => _comments.value;
   String _postID = "";
-  updatePostID(String id){
+  String _whereCommentStores="";
+  updatePostID(String whereCommentStores,String id){
     _postID = id;
+    _whereCommentStores=whereCommentStores;
     fetchComment();
   }
   fetchComment() async{
-    _comments.bindStream(FirebaseFirestore.instance.collection("videos").doc(_postID).collection("comments").snapshots().map((QuerySnapshot query){
+    _comments.bindStream(FirebaseFirestore.instance.collection(_whereCommentStores).doc(_postID).collection("comments").snapshots().map((QuerySnapshot query){
       List<Comment> retVal = [];
       for (var element in query.docs){
         retVal.add(Comment.fromSnap(element));
@@ -28,7 +30,7 @@ class CommentController extends GetxController{
     if(commentText.isNotEmpty){
 
       DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection("users").doc(FirebaseAuth.instance.currentUser!.uid.toString()).get();
-      var allDocs = await FirebaseFirestore.instance.collection("videos").doc(_postID).collection("comments").get();
+      var allDocs = await FirebaseFirestore.instance.collection(_whereCommentStores).doc(_postID).collection("comments").get();
       int len = allDocs.docs.length;
 
       Comment comment = Comment(
@@ -41,12 +43,12 @@ class CommentController extends GetxController{
         id : 'Comment $len'
       );
 
-      await FirebaseFirestore.instance.collection("videos").doc(_postID).collection("comments").doc('Comment $len').set(comment.toJson());
+      await FirebaseFirestore.instance.collection(_whereCommentStores).doc(_postID).collection("comments").doc('Comment $len').set(comment.toJson());
 
 
-      DocumentSnapshot doc = await FirebaseFirestore.instance.collection('videos')
+      DocumentSnapshot doc = await FirebaseFirestore.instance.collection(_whereCommentStores)
 .doc(_postID).get();
-    await FirebaseFirestore.instance.collection('videos').doc(_postID).update({
+    await FirebaseFirestore.instance.collection(_whereCommentStores).doc(_postID).update({
       'commentsCount' : (doc.data() as dynamic)['commentsCount'] + 1,
     });
     }else{
@@ -61,14 +63,14 @@ class CommentController extends GetxController{
 
   likeComment(String id) async{
     var uid  = FirebaseAuth.instance.currentUser!.uid;
-    DocumentSnapshot doc = await FirebaseFirestore.instance.collection('videos').doc(_postID).collection("comments").doc(id).get();
+    DocumentSnapshot doc = await FirebaseFirestore.instance.collection(_whereCommentStores).doc(_postID).collection("comments").doc(id).get();
 
     if((doc.data()! as dynamic)['likes'].contains(uid)){
-      await FirebaseFirestore.instance.collection('videos').doc(_postID).collection('comments').doc(id).update({
+      await FirebaseFirestore.instance.collection(_whereCommentStores).doc(_postID).collection('comments').doc(id).update({
         'likes' : FieldValue.arrayRemove([uid]),
       });
     }else{
-      await FirebaseFirestore.instance.collection('videos').doc(_postID).collection('comments').doc(id).update({
+      await FirebaseFirestore.instance.collection(_whereCommentStores).doc(_postID).collection('comments').doc(id).update({
         'likes' : FieldValue.arrayUnion([uid]),
       });
     }

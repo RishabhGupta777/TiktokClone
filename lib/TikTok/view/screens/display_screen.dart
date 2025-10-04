@@ -124,7 +124,9 @@ class DisplayVideo_Screen extends StatelessWidget {
                                         initialChildSize: 0.5,
                                         minChildSize: 0.25,
                                         builder: (BuildContext context,ScrollController scrollController) {
-                                          return CommentScreen(id: data.id, scrollController: scrollController , draggableController: draggableController);
+                                          return CommentScreen(
+                                            whereCommentStores: "videos",
+                                              id: data.id, scrollController: scrollController , draggableController: draggableController);
                                         },
                                       ),
                                     );

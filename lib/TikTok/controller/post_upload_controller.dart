@@ -62,7 +62,8 @@ class PostUploadController extends GetxController {
         profilePic: (userDoc.data()! as Map<String, dynamic>)['profilePic'],
         caption: caption,
         id: id,
-        type: fileType
+        type: fileType,
+        datePub : DateTime.now(),
       );
 
       await FirebaseFirestore.instance.collection("posts").doc(id).set(post.toJson());

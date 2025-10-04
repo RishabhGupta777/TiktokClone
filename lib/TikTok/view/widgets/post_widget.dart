@@ -6,6 +6,7 @@ import 'package:tiktok_clone/TikTok/controller/post_controller.dart';
 import 'package:tiktok_clone/TikTok/model/post.dart';
 import 'package:tiktok_clone/TikTok/view/screens/comment_screen.dart';
 import 'package:tiktok_clone/TikTok/view/widgets/TikTokVideoPlayer.dart';
+import 'package:timeago/timeago.dart' as tago;
 
 class PostWidget extends StatelessWidget {
   final Post data;   // Firestore doc snapshot
@@ -50,7 +51,7 @@ class PostWidget extends StatelessWidget {
 
                     /// Date/Time
                     Text(
-                      "1 hour ago",
+                      tago.format(data.datePub.toDate()),
                       // Style matching line 31/32: fontSize: 11.sp
                       style: TextStyle(
                           fontSize: 11,
@@ -174,7 +175,9 @@ class PostWidget extends StatelessWidget {
                            initialChildSize: 0.5,
                            minChildSize: 0.25,
                            builder: (BuildContext context,ScrollController scrollController) {
-                             return CommentScreen(id: data.id, scrollController: scrollController , draggableController: draggableController);
+                             return CommentScreen(
+                               whereCommentStores: "posts",
+                                 id: data.id, scrollController: scrollController , draggableController: draggableController);
                            },
                          ),
                        );

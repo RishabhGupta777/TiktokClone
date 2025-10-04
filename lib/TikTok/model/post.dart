@@ -13,7 +13,7 @@ class Post{
   String thumbnail;
   String profilePic;
   String type;
-
+  final datePub;
 
   Post({
     required this.username,
@@ -27,6 +27,7 @@ class Post{
     required this.shareCount,
     required this.postUrl,
     required this.type,
+    required this.datePub,
   });
 
   Map<String, dynamic> toJson()=>{
@@ -41,7 +42,7 @@ class Post{
     "postUrl" : postUrl,
     "thumbnail" : thumbnail,
     "type": type,
-
+    "datePub" : datePub,
   };
 
   static Post fromSnap(DocumentSnapshot snap){
@@ -59,6 +60,7 @@ class Post{
         profilePic: sst["profilePic"],
         postUrl: sst["postUrl"],
        type: sst["type"] ?? "image",
+       datePub : sst["datePub"],
     );
   }
 
