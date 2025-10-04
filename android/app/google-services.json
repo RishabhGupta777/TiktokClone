@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "9430955962",
+    "project_id": "oyes-63857",
+    "storage_bucket": "oyes-63857.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:9430955962:android:cad926e626dd2a198fcf83",
+        "android_client_info": {
+          "package_name": "com.example.tiktok_clone"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIHQYDXQUK8RKztjZ0GTESdGcTXePB-cI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
