@@ -26,9 +26,10 @@ final SearchUserController searchController = Get.put(SearchUserController());
                     contentPadding:
                     EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
                     hintText: "Search Username"
-                )
-            ,controller: searchQuery , onFieldSubmitted: (value){
-              searchController.searchUser(value);
+                ),
+              controller: searchQuery ,
+              onChanged: (value){  // this runs on every keystroke
+              searchController.searchUser(value.trim());
             },),
 
 
@@ -42,18 +43,9 @@ final SearchUserController searchController = Get.put(SearchUserController());
             myUser user = searchController.searchedUsers[index];
 
             return ListTile(
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfileScreen(uid: user.uid)));
-              },
-              leading: CircleAvatar(
-                backgroundImage: NetworkImage(
-
-                  user.profilePhoto
-                ),
-              ),
-
+              onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfileScreen(uid: user.uid)));},
+              leading: CircleAvatar(backgroundImage: NetworkImage(user.profilePhoto),),
               title: Text(user.name),
-
             );
           })
           ,

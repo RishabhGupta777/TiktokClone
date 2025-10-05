@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tiktok_clone/TikTok/controller/auth_controller.dart';
 import 'package:tiktok_clone/TikTok/controller/profile_controller.dart';
+import 'package:tiktok_clone/TikTok/view/screens/followers_screen.dart';
+import 'package:tiktok_clone/TikTok/view/screens/followings_screen.dart';
 
 
 class ProfileScreen extends StatefulWidget {
@@ -59,40 +61,50 @@ Get.snackbar("TikTok Clone Yt App", "Current Version 1.0");
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-ClipOval(
-child: CachedNetworkImage(
-  imageUrl: controller.user['profilePic'],
-  fit: BoxFit.contain,
-  height: 100,
-  width: 100,
-  placeholder: (context , url) => CircularProgressIndicator(),
-  errorWidget: (context , url , error) => Icon(Icons.error),
-),
-)
+                    ClipOval(
+                    child: CachedNetworkImage(
+                      imageUrl: controller.user['profilePic'],
+                      fit: BoxFit.contain,
+                      height: 100,
+                      width: 100,
+                      placeholder: (context , url) => CircularProgressIndicator(),
+                      errorWidget: (context , url , error) => Icon(Icons.error),
+                    ),
+                    )
                     ],
                   ),
                   SizedBox(height: 20,),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(controller.user['followers'] , style: TextStyle(fontSize: 20 , fontWeight: FontWeight.w700),),
-                          SizedBox(height: 10,),
-                          Text("Followers" , style: TextStyle(fontSize: 14 , fontWeight: FontWeight.w400))
-                        ],
+                      InkWell(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>FollowersScreen()));
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(controller.user['followers'] , style: TextStyle(fontSize: 20 , fontWeight: FontWeight.w700),),
+                            SizedBox(height: 2,),
+                            Text("Followers" , style: TextStyle(fontSize: 14 , fontWeight: FontWeight.w400))
+                          ],
+                        ),
                       ),
                       SizedBox(width: 25,),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(controller.user['following'] , style: TextStyle(fontSize: 20 , fontWeight: FontWeight.w700),),
-                          SizedBox(height: 10,),
-                          Text("Followings" , style: TextStyle(fontSize: 14 , fontWeight: FontWeight.w400))
-                        ],
+                      InkWell(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>FollowingsScreen()));
+                      },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(controller.user['following'] , style: TextStyle(fontSize: 20 , fontWeight: FontWeight.w700),),
+                            SizedBox(height: 2,),
+                            Text("Followings" , style: TextStyle(fontSize: 14 , fontWeight: FontWeight.w400))
+                          ],
+                        ),
                       ),
                       SizedBox(width: 25
                         ,),Column(
@@ -100,7 +112,7 @@ child: CachedNetworkImage(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(controller.user['likes'] , style: TextStyle(fontSize: 20 , fontWeight: FontWeight.w700),),
-                          SizedBox(height: 10,),
+                          SizedBox(height:2,),
                           Text("Likes" , style: TextStyle(fontSize: 14 , fontWeight: FontWeight.w400))
                         ],
                       ),

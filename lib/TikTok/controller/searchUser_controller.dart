@@ -8,8 +8,19 @@ class SearchUserController extends GetxController{
   List<myUser> get searchedUsers => _searchUsers.value;
   
   searchUser(String query) async{
+
+    if (query.isEmpty) {
+      _searchUsers.value = [];  //taki textField khali rhe to purana wala search return na kare
+      return;
+    }
+
     _searchUsers.bindStream(
-      FirebaseFirestore.instance.collection("users").where("name" , isGreaterThanOrEqualTo: query).snapshots().map((QuerySnapshot queryRes){
+      FirebaseFirestore.instance
+          .collection("users")
+          .where("name" , isGreaterThanOrEqualTo: query)
+          .where("name", isLessThan: query + 'z') // ensures partial matches
+          .snapshots().
+      map((QuerySnapshot queryRes){
         List<myUser> retVal = [];
         for(var element in queryRes.docs ){
           retVal.add(myUser.fromSnap(element));

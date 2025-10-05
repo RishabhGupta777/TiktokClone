@@ -7,9 +7,9 @@ class TRoundedContainer extends StatelessWidget {
     this.width ,
     this.height ,
     this.radius =20,
-    this.padding = 0,
+    this.padding ,
     this.backgroundColor ,
-    this.margin=0,
+    this.margin,
     this.borderColor,
     this.showBorder=false,
   });
@@ -17,8 +17,8 @@ class TRoundedContainer extends StatelessWidget {
   final double? width;
   final double? height;
   final double radius;
-  final double padding;
-  final double margin;
+  final EdgeInsetsGeometry? padding;
+  final EdgeInsetsGeometry? margin;
   final Color ? backgroundColor;
   final bool showBorder;
   final Color ? borderColor ;
@@ -28,8 +28,8 @@ class TRoundedContainer extends StatelessWidget {
     return Container(
       width:width,
       height: height,
-      margin:EdgeInsets.all(margin) ,
-      padding: EdgeInsets.all(padding),
+      margin:margin ,
+      padding:padding,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(radius), //taki niche ke container se radius match kar paye
         color:backgroundColor ,
