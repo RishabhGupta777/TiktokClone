@@ -79,7 +79,7 @@ Get.snackbar("TikTok Clone Yt App", "Current Version 1.0");
                     children: [
                       InkWell(
                         onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>FollowersScreen()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>FollowersScreen(uid:widget.uid)));
                         },
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -94,7 +94,7 @@ Get.snackbar("TikTok Clone Yt App", "Current Version 1.0");
                       SizedBox(width: 25,),
                       InkWell(
                         onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>FollowingsScreen()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>FollowingsScreen(uid:widget.uid)));
                       },
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,

@@ -36,10 +36,19 @@ class _FeedScreenState extends State<FeedScreen> {
           /// Create Post Section
           SliverToBoxAdapter(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height:30,),
                 Padding(
-                  padding: const EdgeInsets.all(10.0),
+                  padding: const EdgeInsets.only(top:40.0,left:10,right:10),
+                  child: Text("NanoGram",
+                    style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                  ),),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom:20.0,top:10,left:2,right:10),
                   child: Row(
                     children: [
                       Padding(
