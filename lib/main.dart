@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tiktok_clone/TikTok/view/screens/Home.dart';
 
 import 'TikTok/constants.dart';
 import 'TikTok/controller/auth_controller.dart';
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
 
           scaffoldBackgroundColor: backgroundColor
       ),
-      home: SignUpScreen(),
+      home: HomeScreen(),
     );
   }
 }

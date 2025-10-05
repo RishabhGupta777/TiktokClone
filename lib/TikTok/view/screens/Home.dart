@@ -1,4 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
 import 'package:tiktok_clone/TikTok/constants.dart';
+import 'package:tiktok_clone/TikTok/view/screens/add_video.dart';
+import 'package:tiktok_clone/TikTok/view/screens/display_screen.dart';
+import 'package:tiktok_clone/TikTok/view/screens/feed_screen.dart';
+import 'package:tiktok_clone/TikTok/view/screens/profile_screen.dart';
+import 'package:tiktok_clone/TikTok/view/screens/search_screen.dart';
 import 'package:tiktok_clone/TikTok/view/widgets/customAddIcon.dart';
 import 'package:flutter/material.dart';
 
@@ -58,7 +65,13 @@ type: BottomNavigationBarType.fixed,
         ],
       ),
       body: Center(
-        child: pageindex[pageIdx],
+        child: [
+          DisplayVideo_Screen(),
+          SearchScreen(),
+          addVideoScreen(),
+          FeedScreen(),
+          ProfileScreen(uid: FirebaseAuth.instance.currentUser!.uid,),
+        ][pageIdx],
       ),
     );
   }

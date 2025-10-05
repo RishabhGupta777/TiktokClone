@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tiktok_clone/TikTok/constants.dart';
 import 'package:tiktok_clone/TikTok/controller/post_upload_controller.dart';
+import 'package:tiktok_clone/TikTok/controller/profile_info_controller.dart';
 import 'package:tiktok_clone/TikTok/view/widgets/button.dart';
 import 'package:tiktok_clone/TikTok/view/widgets/text_input.dart';
 import 'package:video_player/video_player.dart';
@@ -18,7 +19,9 @@ class CreatePostScreen extends StatefulWidget {
 class _CreatePostScreenState extends State<CreatePostScreen> {
  final TextEditingController captionController = TextEditingController();
  PostUploadController postUploadController = Get.put(PostUploadController());
-   XFile? selectedFile;
+ final ProfileInfoController profileInfoController = Get.put(ProfileInfoController());
+
+ XFile? selectedFile;
    String? fileType;   // "image" or "video"
    VideoPlayerController? _videoController;
    String path=" ";
@@ -71,6 +74,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     }
   }
 
+ @override
+ void initState() {
+   super.initState();
+   profileInfoController.fetchUserProfile();
+ }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,20 +115,27 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     child: SizedBox(
                       width: 35, // Matching width from the screenshot (line 14)
                       height: 35, // Matching height from the screenshot (line 15)
-                      child: Image.network(
-                        'https://firebasestorage.googleapis.com/v0/b/oyes-63857.appspot.com/o/profilePics%2FFAfBzyJJEkRQOQRYFFeezEglcJr2?alt=media&token=8a166954-1144-4c79-992b-6b443d7b2ddb', // Asset for profile picture
-                        fit: BoxFit.cover,
-                      ),
+                      child: Obx(() {
+                        if (profileInfoController.isLoading.value) {
+                          return CircularProgressIndicator(strokeWidth: 2);
+                        }
+                        return Image.network(
+                          profileInfoController.userProfilePic,
+                          fit: BoxFit.cover,
+                        );
+                      }),
                     ),
                   ),
                   SizedBox(width: 8),
-                  Text(
-                    'rishabh',
-                    // Style matching line 28/29: fontSize: 13.sp
-                    style: TextStyle(
-                        fontSize:16,
-                        fontWeight: FontWeight.bold
-                    ),
+                  Obx( () {
+                      return Text(
+                        profileInfoController.userName,
+                        style: TextStyle(
+                            fontSize:16,
+                            fontWeight: FontWeight.bold
+                        ),
+                      );
+                    }
                   ),
                 ],
               ),

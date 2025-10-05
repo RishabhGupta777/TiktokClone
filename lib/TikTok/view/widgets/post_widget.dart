@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:tiktok_clone/TikTok/controller/post_controller.dart';
 import 'package:tiktok_clone/TikTok/model/post.dart';
 import 'package:tiktok_clone/TikTok/view/screens/comment_screen.dart';
+import 'package:tiktok_clone/TikTok/view/screens/profile_screen.dart';
 import 'package:tiktok_clone/TikTok/view/widgets/TikTokVideoPlayer.dart';
 import 'package:timeago/timeago.dart' as tago;
 
@@ -21,48 +22,53 @@ class PostWidget extends StatelessWidget {
         // ------------------------------------
         // 1. POST HEADER (ListTile equivalent)
         // ------------------------------------
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-          child: Row(
-            children: [
-              ClipOval(
-                child: SizedBox(
-                  width: 35, // Matching width from the screenshot (line 14)
-                  height: 35, // Matching height from the screenshot (line 15)
-                  child: Image.network(
-                    data.profilePic,
-                    fit: BoxFit.cover,
+        InkWell(
+          onTap: (){
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfileScreen(uid: data.uid)));
+          },
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+            child: Row(
+              children: [
+                ClipOval(
+                  child: SizedBox(
+                    width: 35, // Matching width from the screenshot (line 14)
+                    height: 35, // Matching height from the screenshot (line 15)
+                    child: Image.network(
+                      data.profilePic,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(width: 8),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      data.username,
-                      // Style matching line 28/29: fontSize: 13.sp
-                      style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold
+                SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        data.username,
+                        // Style matching line 28/29: fontSize: 13.sp
+                        style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold
+                        ),
                       ),
-                    ),
 
-                    /// Date/Time
-                    Text(
-                      tago.format(data.datePub.toDate()),
-                      // Style matching line 31/32: fontSize: 11.sp
-                      style: TextStyle(
-                          fontSize: 11,
-                          color: Colors.grey[700]
+                      /// Date/Time
+                      Text(
+                        tago.format(data.datePub.toDate()),
+                        // Style matching line 31/32: fontSize: 11.sp
+                        style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.grey[700]
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              const Icon(Icons.more_horiz), // Trailing icon from line 33
-            ],
+                const Icon(Icons.more_horiz), // Trailing icon from line 33
+              ],
+            ),
           ),
         ),
 
