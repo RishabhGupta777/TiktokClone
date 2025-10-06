@@ -25,12 +25,20 @@ class _FollowersScreenState extends State<FollowersScreen> {
   }
 
   @override
+  void dispose() {
+    // IMPORTANT: Remove the controller instance when the screen is closed.
+    // This triggers the onClose() method in the controller,
+    // where we reset the state and cancel the stream subscription.
+    Get.delete<FollowersController>();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
         title: TextFormField(
-          decoration: new InputDecoration(
+          decoration: const InputDecoration(
               border: InputBorder.none,
               focusedBorder: InputBorder.none,
               enabledBorder: InputBorder.none,
@@ -42,25 +50,36 @@ class _FollowersScreenState extends State<FollowersScreen> {
           ),
           controller: searchQuery ,
           onChanged: (value){  // this runs on every keystroke
-            // followersController.searchUser(value.trim());
+            followersController.searchUser(value);
           },),
 
 
       ),
-      body:Obx(() {return followersController.followers.isEmpty ?   Center(
-        child: Text("No any Followers!"),
-      ) :
-      ListView.builder(
-          itemCount: followersController.followers.length,
-          itemBuilder: (context, index){
-            myUser user = followersController.followers[index];
+      body:Obx(() {
+        final List<myUser> displayList = followersController.filteredFollowers;
+        final bool isInitialLoading = followersController.followers.isEmpty && searchQuery.text.isEmpty;
 
-            return ListTile(
-              onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfileScreen(uid: user.uid)));},
-              leading: CircleAvatar(backgroundImage: NetworkImage(user.profilePhoto),),
-              title: Text(user.name),
-            );
-          });
+        if (isInitialLoading) {
+          return const Center(
+            child: Text("No any Followers!"),
+          );
+        } else if (displayList.isEmpty && searchQuery.text.isNotEmpty) {
+          return Center(
+            child: Text("No users found for \"${searchQuery.text}\""),
+          );
+        }
+
+        return ListView.builder(
+            itemCount: displayList.length,
+            itemBuilder: (context, index){
+              myUser user = displayList[index];
+
+              return ListTile(
+                onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfileScreen(uid: user.uid)));},
+                leading: CircleAvatar(backgroundImage: NetworkImage(user.profilePhoto),),
+                title: Text(user.name),
+              );
+            });
   })
     );
   }

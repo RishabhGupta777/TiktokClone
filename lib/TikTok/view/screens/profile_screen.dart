@@ -146,10 +146,8 @@ Get.snackbar("TikTok Clone Yt App", "Current Version 1.0");
 
                       child: Center(
                         child : Text( widget.uid == FirebaseAuth.instance.currentUser!.uid ?  "Sign Out" :
-                        controller.user['isFollowing'] ? "Following"
-                        :
-
-                        "Follow")
+                        controller.user['isFollowing'] ? "Following" : "Follow"
+                        )
                       ),
                     ),
                   ),
