@@ -40,8 +40,8 @@ type: BottomNavigationBarType.fixed,
           ),
 
           BottomNavigationBarItem(
-              icon: Icon(Icons.search, size: 25),
-              label: 'Search'
+              icon: Icon(Icons.video_collection_outlined, size: 25),
+              label: 'Shorts'
 
           ),
 
@@ -66,10 +66,10 @@ type: BottomNavigationBarType.fixed,
       ),
       body: Center(
         child: [
-          DisplayVideo_Screen(),
-          SearchScreen(),
-          addVideoScreen(),
           FeedScreen(),
+          DisplayVideo_Screen(),
+          addVideoScreen(),
+          Text("Messages"),
           ProfileScreen(uid: FirebaseAuth.instance.currentUser!.uid,),
         ][pageIdx],
       ),

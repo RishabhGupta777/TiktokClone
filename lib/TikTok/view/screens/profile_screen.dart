@@ -35,13 +35,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           return
             Scaffold(
       appBar: AppBar(
-title: Text('${controller.user["name"]}'), 
+title: Text('${controller.user["name"]}'),
         centerTitle:false,
 
         actions: [
           IconButton(
             onPressed: (){
-Get.snackbar("TikTok Clone Yt App", "Current Version 1.0");
+Get.snackbar("NanoGram App", "Current Version 1.0");
             },
             icon: Icon(Icons.info_outline_rounded),
           )

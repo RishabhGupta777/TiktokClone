@@ -60,7 +60,7 @@ class PostWidget extends StatelessWidget {
                         // Style matching line 31/32: fontSize: 11.sp
                         style: TextStyle(
                             fontSize: 11,
-                            color: Colors.grey[700]
+                            color: Colors.grey[500]
                         ),
                       ),
                     ],
@@ -78,11 +78,6 @@ class PostWidget extends StatelessWidget {
           padding: const EdgeInsets.only(left:8.0,right:8.0,bottom: 8.0),
           child: Text(
             data.caption,
-            // Style matching line 31/32: fontSize: 11.sp
-            style: TextStyle(
-                fontSize: 11,
-                color: Colors.grey[700]
-            ),
           ),
         ),
 

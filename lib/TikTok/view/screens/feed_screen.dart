@@ -5,6 +5,7 @@ import 'package:tiktok_clone/TikTok/controller/profile_controller.dart';
 import 'package:tiktok_clone/TikTok/controller/profile_info_controller.dart';
 import 'package:tiktok_clone/TikTok/view/screens/create_post_screen.dart';
 import 'package:tiktok_clone/TikTok/view/screens/profile_screen.dart';
+import 'package:tiktok_clone/TikTok/view/screens/search_screen.dart';
 import 'package:tiktok_clone/TikTok/view/widgets/button.dart';
 import 'package:tiktok_clone/TikTok/view/widgets/post_widget.dart';
 
@@ -39,13 +40,23 @@ class _FeedScreenState extends State<FeedScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top:40.0,left:10,right:10),
-                  child: Text("NanoGram",
-                    style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white,
-                  ),),
+                  padding: const EdgeInsets.only(top:42.0,left:10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("NanoGram",
+                        style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      ),),
+                      IconButton(
+                          onPressed:(){
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>SearchScreen()));
+                          },
+                          icon: Icon(Icons.search_rounded))
+                    ],
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom:20.0,top:10,left:2,right:10),

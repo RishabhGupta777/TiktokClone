@@ -28,8 +28,6 @@ Map<String, dynamic> get user => _user.value;
 
     DocumentSnapshot userDoc  = await FirebaseFirestore.instance.collection("users").doc(_uid.value).get();
 
-    final userData = userDoc.data() as dynamic;
-
     String name = userDoc['name'];
     String profilePic = userDoc['profilePic'];
     int likes = 0;
@@ -48,8 +46,12 @@ Map<String, dynamic> get user => _user.value;
     followers = followerDoc.docs.length;
     following = followingDoc.docs.length;
 
-    FirebaseFirestore.instance.collection("users").doc(_uid.value).collection("followers").doc(FirebaseAuth.instance.currentUser!.uid).get().then((value){
-
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(_uid.value)
+        .collection("followers")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get().then((value){
       if(value.exists){
         //FOLLOW KRTA HAI
         isFollowing = true;
@@ -58,6 +60,17 @@ Map<String, dynamic> get user => _user.value;
         isFollowing = false;
       }
     });
+    ///uper lines of processing following in different lines
+    // var followCheck = await FirebaseFirestore.instance
+    //     .collection("users")
+    //     .doc(_uid.value)
+    //     .collection("followers")
+    //     .doc(FirebaseAuth.instance.currentUser!.uid)
+    //     .get();
+    //
+    // if (followCheck.exists) {
+    //   isFollowing = true;
+    // }
 
 
  _user.value = {

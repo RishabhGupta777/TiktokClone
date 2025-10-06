@@ -26,9 +26,7 @@ class _FollowersScreenState extends State<FollowersScreen> {
 
   @override
   void dispose() {
-    // IMPORTANT: Remove the controller instance when the screen is closed.
-    // This triggers the onClose() method in the controller,
-    // where we reset the state and cancel the stream subscription.
+    // This triggers the onClose() method in the controller,where we reset the state 
     Get.delete<FollowersController>();
     super.dispose();
   }
