@@ -121,10 +121,10 @@ class _ChatScreenState extends State<ChatScreen> {
                           icon: const Icon(Icons.attach_file),
                           onPressed: () async {
                             final ImagePicker picker = ImagePicker();
-                            final List<XFile> files = await picker.pickMultiImage(); // For images only
+                            // final List<XFile> files = await picker.pickMultiImage(); // For images only
 
                             // For both images & videos use:
-                            // final files = await picker.pickMultipleMedia();
+                            final files = await picker.pickMultipleMedia();
 
                             if (files.isNotEmpty) {
                               await chatProvider.sendMessage(widget.receiver, mediaFiles: files);
