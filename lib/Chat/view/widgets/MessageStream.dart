@@ -43,6 +43,10 @@ class MessageStream extends StatelessWidget {
         for (var doc in messages) {
           final msg = Message.fromSnap(doc);
 
+          if (msg.sendBy != currentUser && !msg.isRead) {
+            chatProvider.markMessageAsRead(doc.id,receiver);
+          }
+
           bubbles.add(
             MessageBubble(
               id: doc.id,
@@ -51,7 +55,6 @@ class MessageStream extends StatelessWidget {
               isMe: msg.sendBy == currentUser,
               timestamp: msg.timestamp,
               mediaUrls: msg.mediaUrl,
-              type: msg.type,
               isRead:msg.isRead,
             ),
           );

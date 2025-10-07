@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:tiktok_clone/TikTok/view/widgets/TikTokVideoPlayer.dart';
 import 'package:video_player/video_player.dart';
 import 'package:tiktok_clone/Chat/controller/ChatProvider.dart';
 
@@ -13,10 +14,9 @@ class MessageBubble extends StatefulWidget {
   final bool isMe;
   final Timestamp? timestamp;
   final bool isRead;
-  final List<dynamic>? mediaUrls;
-  final String? type;
+  List<Map<String,String>> mediaUrls;
 
-  const MessageBubble({
+  MessageBubble({
     super.key,
     required this.id,
     required this.text,
@@ -24,8 +24,7 @@ class MessageBubble extends StatefulWidget {
     required this.isMe,
     required this.timestamp,
     required this.isRead,
-    this.mediaUrls,
-    this.type,
+    required this.mediaUrls,
   });
 
   @override
@@ -33,28 +32,39 @@ class MessageBubble extends StatefulWidget {
 }
 
 class _MessageBubbleState extends State<MessageBubble> {
-  final List<VideoPlayerController> _videoControllers = [];
+
+// Use a Map to associate the URL with its controller for easier management
+  final Map<String, VideoPlayerController> _videoControllers = {};
 
   @override
   void initState() {
     super.initState();
-    // Initialize video players if there are videos
-    if (widget.type == 'video' && widget.mediaUrls != null) {
-      for (var url in widget.mediaUrls!) {
-        final controller = VideoPlayerController.networkUrl(Uri.parse(url))
-          ..initialize().then((_) {
-            setState(() {});
-          });
-        _videoControllers.add(controller);
+    // 💡 Initialize controllers for all video media
+    _initializeVideoControllers();
+  }
+
+  void _initializeVideoControllers() {
+    for (var item in widget.mediaUrls) {
+      if (item['type'] == 'video') {
+        final url = item['url']!;
+        if (!_videoControllers.containsKey(url)) {
+          final controller = VideoPlayerController.networkUrl(Uri.parse(url)) // Use networkUrl
+            ..initialize().then((_) {
+              // Only call setState if the widget is still mounted
+              if (mounted) {
+                setState(() {}); // Rebuild to show the video once initialized
+              }
+            });
+          _videoControllers[url] = controller;
+        }
       }
     }
   }
 
   @override
   void dispose() {
-    for (var c in _videoControllers) {
-      c.dispose();
-    }
+    // 🗑️ Dispose of all controllers when the widget is removed
+    _videoControllers.values.forEach((controller) => controller.dispose());
     super.dispose();
   }
 
@@ -107,8 +117,11 @@ class _MessageBubbleState extends State<MessageBubble> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     // 🖼️ MEDIA SECTION
-                    if (widget.mediaUrls != null && widget.mediaUrls!.isNotEmpty)
-                      _buildMediaGrid(context),
+                    if (widget.mediaUrls != null && widget.mediaUrls.isNotEmpty)
+                      SizedBox(
+                        width:280,
+                          height:280,
+                          child: _buildMediaGrid(context)),
 
                     // 💬 TEXT SECTION
                     if (widget.text.trim().isNotEmpty)
@@ -133,7 +146,7 @@ class _MessageBubbleState extends State<MessageBubble> {
                             timeString,
                             style: const TextStyle(
                               fontSize: 10,
-                              color: Colors.black45,
+                              color: Colors.black54,
                             ),
                           ),
                           if (widget.isMe) const SizedBox(width: 5),
@@ -141,7 +154,7 @@ class _MessageBubbleState extends State<MessageBubble> {
                             widget.isRead
                                 ? const Icon(Icons.done_all,
                                 size: 16, color: Colors.blue)
-                                : const Icon(Icons.done, size: 16),
+                                : const Icon(Icons.done, size: 16,color:Colors.black54),
                         ],
                       ),
                     ),
@@ -157,40 +170,38 @@ class _MessageBubbleState extends State<MessageBubble> {
 
   /// Builds a WhatsApp-like grid for multiple images/videos
   Widget _buildMediaGrid(BuildContext context) {
-    final urls = widget.mediaUrls!;
-    int itemCount = urls.length;
+    final mediaItems = widget.mediaUrls ?? [];
+    int itemCount = mediaItems.length;
 
     // WhatsApp style grid (max 4 visible, rest shows "+N")
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: itemCount == 1 ? 1 : (itemCount == 2 ? 2 : 3),
+        crossAxisCount: itemCount == 1 ? 1 : (itemCount == 2 ? 2 : 2),
         mainAxisSpacing: 4,
         crossAxisSpacing: 4,
       ),
-      itemCount: itemCount > 4 ? 4 : itemCount,
+      itemCount: mediaItems.length > 4 ? 4 : mediaItems.length,
       itemBuilder: (context, index) {
-        final url = urls[index];
-        final isVideo = widget.type == 'video';
+        final item = mediaItems[index] as Map<String, dynamic>;
+        final url = item['url'];
+        final type = item['type'];
 
         Widget mediaWidget;
 
-        if (isVideo) {
-          final controller = _videoControllers[index];
-          mediaWidget = controller.value.isInitialized
-              ? Stack(
+        if (type == 'video') {
+              mediaWidget= Stack(
             alignment: Alignment.center,
             children: [
               AspectRatio(
-                aspectRatio: controller.value.aspectRatio,
-                child: VideoPlayer(controller),
+                aspectRatio: 1,
+                child: TikTokVideoPlayer(videoUrl: url),
               ),
               const Icon(Icons.play_circle_fill,
                   color: Colors.white, size: 40),
             ],
-          )
-              : const Center(child: CircularProgressIndicator());
+          );
         } else {
           mediaWidget = CachedNetworkImage(
             imageUrl: url,
@@ -204,7 +215,7 @@ class _MessageBubbleState extends State<MessageBubble> {
         }
 
         // If more than 4 media, show overlay "+N"
-        if (index == 3 && itemCount > 4) {
+        if (index == 3 && mediaItems.length > 4) {
           return Stack(
             fit: StackFit.expand,
             children: [

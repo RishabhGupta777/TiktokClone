@@ -106,26 +106,51 @@ class ChatProvider with ChangeNotifier {
 
     final chatsRef = chatRoomRef.collection('chats');
 
-    // Upload media if available
-    List<String> mediaUrls = [];
+
     String type = 'text';
 
+    // Upload media if available
+    // Prepare media list
+    List<Map<String, String>> mediaList = [];
+
+    // if (mediaFiles != null && mediaFiles.isNotEmpty) {
+    //   for (var file in mediaFiles) {
+    //     final ref = FirebaseStorage.instance
+    //         .ref()
+    //         .child('chat_media/${DateTime.now().millisecondsSinceEpoch}_${path.basename(file.path)}');
+    //
+    //     final uploadTask = await ref.putFile(File(file.path));
+    //     final url = await uploadTask.ref.getDownloadURL();
+    //
+    //     // detect type
+    //     final fileType = file.path.endsWith('.mp4') ? 'video' : 'image';
+    //     mediaList.add({'url': url, 'type': fileType});
+    //   }
+    // }
+
     if (mediaFiles != null && mediaFiles.isNotEmpty) {
-      mediaUrls = await uploadMedia(mediaFiles);
-      type = mediaFiles.first.path.endsWith('.mp4') ? 'video' : 'image';
+      // Upload all files
+      final urls = await uploadMedia(mediaFiles);
+
+      // ✅ Pair each uploaded file with its type
+      for (int i = 0; i < mediaFiles.length; i++) {
+        final file = mediaFiles[i];
+        final url = urls[i];
+        final fileType = file.path.endsWith('.mp4') ? 'video' : 'image';
+        mediaList.add({'url': url, 'type': fileType});
+      }
     }
 
     // Don’t send empty messages
     if (messageText == null &&
-        (mediaUrls.isEmpty)) return;
+        (mediaList.isEmpty)) return;
 
     await chatsRef.add({
       'messageText': messageText ?? '',
       'sendBy': senderUid,
       'timestamp': FieldValue.serverTimestamp(),
-      'mediaUrl': mediaUrls,
+      'mediaUrl': mediaList,
       'isRead': false,
-      'type': type,
     });
 
     messageText = null;
@@ -142,6 +167,14 @@ class ChatProvider with ChangeNotifier {
       await chatsRef.doc(id).delete();
     }
     clearSelection();
+  }
+
+  Future<void> markMessageAsRead(String messageId,String receiver) async {
+    final senderUid = loggedInUser?.uid ?? '';
+    final chatRoomId = getChatRoomId(senderUid, receiver);
+    await _firestore.collection('ChatRoom').doc(chatRoomId).collection('chats').doc(messageId).update({
+      'isRead': true,
+    });
   }
 
   bool get isSelectionActive => selectedMessageIds.isNotEmpty;

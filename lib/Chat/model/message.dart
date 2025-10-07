@@ -4,9 +4,8 @@ class Message{
   String messageText;
   String sendBy;
   Timestamp ? timestamp;
-  List<dynamic> mediaUrl;
+  List<Map<String,String>> mediaUrl; //here two maps exist one for url and another for type-->each item: {"url": "...", "type": "..."}
   bool isRead;
-  String type;
 
   Message({
     required this.messageText,
@@ -14,7 +13,6 @@ class Message{
     required this.timestamp,
     required this.mediaUrl,
     required this.isRead,
-    required this.type,
   });
 
   Map<String, dynamic> toJson()=>{
@@ -23,7 +21,6 @@ class Message{
     "timestamp" : timestamp,
     "mediaUrl":mediaUrl,
     "isRead":isRead,
-    "type":type,
   };
 
   static Message fromSnap(DocumentSnapshot snap){
@@ -33,9 +30,10 @@ class Message{
         messageText: sst["messageText"],
         sendBy: sst["sendBy"],
         timestamp: sst["timestamp"],
-        mediaUrl:sst["mediaUrl"],
+      mediaUrl: (sst["mediaUrl"] as List)
+          .map((e) => Map<String, String>.from(e))
+          .toList(),
         isRead:sst["isRead"],
-        type: sst["type"],
     );
   }
 
