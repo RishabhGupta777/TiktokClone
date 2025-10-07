@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:tiktok_clone/Chat/view/screens/chat_users.dart';
 import 'package:tiktok_clone/TikTok/constants.dart';
 import 'package:tiktok_clone/TikTok/view/screens/add_video.dart';
 import 'package:tiktok_clone/TikTok/view/screens/display_screen.dart';
@@ -69,7 +70,7 @@ type: BottomNavigationBarType.fixed,
           FeedScreen(),
           DisplayVideo_Screen(),
           addVideoScreen(),
-          Text("Messages"),
+          ChatUsers(),
           ProfileScreen(uid: FirebaseAuth.instance.currentUser!.uid,),
         ][pageIdx],
       ),

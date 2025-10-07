@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tiktok_clone/Chat/view/screens/ChatScreen.dart';
 import 'package:tiktok_clone/TikTok/controller/auth_controller.dart';
 import 'package:tiktok_clone/TikTok/controller/profile_controller.dart';
 import 'package:tiktok_clone/TikTok/view/screens/followers_screen.dart';
@@ -41,9 +42,18 @@ title: Text('${controller.user["name"]}'),
         actions: [
           IconButton(
             onPressed: (){
-Get.snackbar("NanoGram App", "Current Version 1.0");
+              widget.uid == FirebaseAuth.instance.currentUser!.uid ?
+                Get.snackbar("NanoGram App", "Current Version 1.0"):
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChatScreen(
+                    receiver:widget.uid,
+                  ),
+                ),
+              );
             },
-            icon: Icon(Icons.info_outline_rounded),
+            icon: Icon(widget.uid == FirebaseAuth.instance.currentUser!.uid ?Icons.info_outline :Icons.chat),
           )
         ],
       ),

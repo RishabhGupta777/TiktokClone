@@ -1,6 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
+import 'package:tiktok_clone/Chat/controller/ChatProvider.dart';
 import 'package:tiktok_clone/TikTok/view/screens/Home.dart';
 
 import 'TikTok/constants.dart';
@@ -13,7 +15,14 @@ void main()  async{
     Get.put(AuthController());
 
   });
-  runApp(const MyApp());
+  runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context) => ChatProvider()),
+        ],
+        child: const MyApp(), // Use 'const' with the constructor to improve performance.
+      )
+  );
 }
 
 class MyApp extends StatelessWidget {
