@@ -64,10 +64,33 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
 
             // Delete only own messages
-            if (chatProvider.selectedOwnership.values.every((isMine) => isMine))
               IconButton(
                 icon: const Icon(Icons.delete),
-                onPressed: () => chatProvider.deleteMessages(widget.receiver),
+                onPressed: () =>
+                showDialog<String>(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    title:Text('Delete message?',style: TextStyle(fontSize:16),),
+                    actions: <Widget>[
+                      if (chatProvider.selectedOwnership.values.every((isMine) => isMine))
+                        TextButton(onPressed: (){
+                        chatProvider.deleteMessages(widget.receiver);
+                        Navigator.pop(context);
+                            },
+                            child: Text('Delete for everyone')),
+
+                      TextButton(onPressed: (){
+                          ///write function to delete for me
+                          Navigator.pop(context);
+                          },
+                          child: const Text('Delete for me')),
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, 'Cancel'),
+                        child: const Text('Cancel'),
+                      ),
+                    ],
+                  ),
+                ),
               ),
           ]
         ],
