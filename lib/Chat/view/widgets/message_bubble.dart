@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:tiktok_clone/TikTok/view/widgets/MediaPreviewScreen.dart';
 import 'package:tiktok_clone/TikTok/view/widgets/TikTokVideoPlayer.dart';
 import 'package:video_player/video_player.dart';
 import 'package:tiktok_clone/Chat/controller/ChatProvider.dart';
@@ -116,14 +117,14 @@ class _MessageBubbleState extends State<MessageBubble> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    // 🖼️ MEDIA SECTION
+                    /// MEDIA SECTION
                     if (widget.mediaUrls != null && widget.mediaUrls.isNotEmpty)
                       SizedBox(
                         width:280,
                           height:280,
                           child: _buildMediaGrid(context)),
 
-                    // 💬 TEXT SECTION
+                    /// TEXT SECTION
                     if (widget.text.trim().isNotEmpty)
                       Padding(
                         padding: const EdgeInsets.only(top: 6, left: 4, right: 4),
@@ -136,7 +137,7 @@ class _MessageBubbleState extends State<MessageBubble> {
                         ),
                       ),
 
-                    // 🕓 TIME + READ ICON
+                    /// TIME + READ ICON
                     Padding(
                       padding: const EdgeInsets.only(top: 4, right: 4),
                       child: Row(
@@ -236,10 +237,23 @@ class _MessageBubbleState extends State<MessageBubble> {
           );
         }
 
-        return ClipRRect(
+        return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => MediaPreviewScreen(
+                    mediaItems: mediaItems.cast<Map<String, dynamic>>(),
+                    initialIndex: index,
+                  ),
+                ),
+              );
+            },
+
+        child: ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: mediaWidget,
-        );
+        ),);
       },
     );
   }
