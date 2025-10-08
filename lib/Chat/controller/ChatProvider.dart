@@ -113,21 +113,6 @@ class ChatProvider with ChangeNotifier {
     // Prepare media list
     List<Map<String, String>> mediaList = [];
 
-    // if (mediaFiles != null && mediaFiles.isNotEmpty) {
-    //   for (var file in mediaFiles) {
-    //     final ref = FirebaseStorage.instance
-    //         .ref()
-    //         .child('chat_media/${DateTime.now().millisecondsSinceEpoch}_${path.basename(file.path)}');
-    //
-    //     final uploadTask = await ref.putFile(File(file.path));
-    //     final url = await uploadTask.ref.getDownloadURL();
-    //
-    //     // detect type
-    //     final fileType = file.path.endsWith('.mp4') ? 'video' : 'image';
-    //     mediaList.add({'url': url, 'type': fileType});
-    //   }
-    // }
-
     if (mediaFiles != null && mediaFiles.isNotEmpty) {
       // Upload all files
       final urls = await uploadMedia(mediaFiles);
@@ -145,6 +130,16 @@ class ChatProvider with ChangeNotifier {
     if (messageText == null &&
         (mediaList.isEmpty)) return;
 
+
+    // If exactly 1 message selected → edit
+    if (selectedMessageIds.length == 1) {
+      await chatsRef.doc(selectedMessageIds.first)
+          .update({
+        'messageText': messageText,
+        'isRead': false,
+      });
+      clearSelection();
+    } else {
     await chatsRef.add({
       'messageText': messageText ?? '',
       'sendBy': senderUid,
@@ -152,7 +147,7 @@ class ChatProvider with ChangeNotifier {
       'mediaUrl': mediaList,
       'isRead': false,
     });
-
+  }
     messageText = null;
     notifyListeners();
   }
