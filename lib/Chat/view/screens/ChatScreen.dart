@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:tiktok_clone/Chat/controller/ChatProvider.dart';
 import 'package:tiktok_clone/Chat/view/widgets/MessageStream.dart';
+import 'package:tiktok_clone/Chat/view/widgets/attach_icons.dart';
 
 
 class ChatScreen extends StatefulWidget {
@@ -79,9 +80,9 @@ class _ChatScreenState extends State<ChatScreen> {
                             },
                             child: Text('Delete for everyone')),
 
-                      TextButton(onPressed: (){
-                          ///write function to delete for me
-                          Navigator.pop(context);
+                      TextButton(onPressed: ()async{
+                        await chatProvider.deleteForMe(widget.receiver);
+                        Navigator.pop(context);
                           },
                           child: const Text('Delete for me')),
                       TextButton(
@@ -142,16 +143,52 @@ class _ChatScreenState extends State<ChatScreen> {
                     decoration: InputDecoration(
                         suffixIcon: IconButton(
                           icon: const Icon(Icons.attach_file),
-                          onPressed: () async {
-                            final ImagePicker picker = ImagePicker();
-                            // final List<XFile> files = await picker.pickMultiImage(); // For images only
+                          onPressed: ()  {
+                            showDialog(
+                              context: context,
+                              builder: (_) =>AlertDialog(
+                                actions: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(top:26),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        AttachIcons(
+                                          onPressed: ()async{
+                                            final ImagePicker picker = ImagePicker();
+                                            // final List<XFile> files = await picker.pickMultiImage(); // For images only
 
-                            // For both images & videos use:
-                            final files = await picker.pickMultipleMedia();
+                                            // For both images & videos use:
+                                            final files = await picker.pickMultipleMedia();
 
-                            if (files.isNotEmpty) {
-                              await chatProvider.sendMessage(widget.receiver, mediaFiles: files);
-                            }
+                                            if (files.isNotEmpty) {
+                                              await chatProvider.sendMessage(widget.receiver, mediaFiles: files);
+                                            }
+                                          },
+                                          icon: const Icon(Icons.photo,color:Colors.blue),
+                                          iconName:const Text('Galery'),
+                                        ),
+                                        AttachIcons(
+                                          onPressed: (){
+
+                                          },
+                                          icon: const Icon(Icons.camera_alt,color:Colors.red),
+                                          iconName:const Text('Take Photo'),
+                                        ),
+                                        AttachIcons(
+                                          onPressed: (){
+
+                                          },
+                                          icon: const Icon(Icons.videocam_outlined,color:Colors.red),
+                                          iconName:const Text('Take Video'),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ) ,
+                            );
+
                           },
                         ),
 

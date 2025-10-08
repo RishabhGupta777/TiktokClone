@@ -146,6 +146,7 @@ class ChatProvider with ChangeNotifier {
       'timestamp': FieldValue.serverTimestamp(),
       'mediaUrl': mediaList,
       'isRead': false,
+      'deletedFor':[],
     });
   }
     messageText = null;
@@ -163,6 +164,21 @@ class ChatProvider with ChangeNotifier {
     }
     clearSelection();
   }
+
+  Future<void> deleteForMe(String receiver) async {
+    final senderUid = loggedInUser?.uid ?? '';
+    final chatRoomId = getChatRoomId(senderUid, receiver);
+    final chatsRef =
+    _firestore.collection('ChatRoom').doc(chatRoomId).collection('chats');
+
+    for (String id in selectedMessageIds) {
+      await chatsRef.doc(id).update({
+        'deletedFor': FieldValue.arrayUnion([senderUid]), // hide for current user only
+      });
+    }
+    clearSelection();
+  }
+
 
   Future<void> markMessageAsRead(String messageId,String receiver) async {
     final senderUid = loggedInUser?.uid ?? '';

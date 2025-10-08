@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:tiktok_clone/TikTok/view/widgets/TikTokVideoPlayer.dart';
 
@@ -59,16 +60,13 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
                   maxScale: 4.0, // zoom up to 4x
                   boundaryMargin: const EdgeInsets.only(bottom:0),
                   child: SizedBox.expand(
-                    child: Image.network(
-                      url,
+                    child: CachedNetworkImage(
+                      imageUrl: url,
                       fit: BoxFit.contain,
-                      loadingBuilder: (context, child, progress) {
-                        if (progress == null) return child;
-                        return const Center(
-                          child: CircularProgressIndicator(color: Colors.white),
-                        );
-                      },
-                      errorBuilder: (_, __, ___) => const Icon(
+                      placeholder: (context, _) => const Center(
+                        child: CircularProgressIndicator(color: Colors.white),
+                      ),
+                      errorWidget: (context, __, ___) => const Icon(
                         Icons.error,
                         color: Colors.white,
                         size: 50,

@@ -43,6 +43,11 @@ class MessageStream extends StatelessWidget {
         for (var doc in messages) {
           final msg = Message.fromSnap(doc);
 
+          ///Skip messages deleted for current user
+          final deletedFor = (doc['deletedFor'] ?? []) as List;
+          if (deletedFor.contains(currentUser)) continue;
+
+          ///for blue tick or read done
           if (msg.sendBy != currentUser && !msg.isRead) {
             chatProvider.markMessageAsRead(doc.id,receiver);
           }
