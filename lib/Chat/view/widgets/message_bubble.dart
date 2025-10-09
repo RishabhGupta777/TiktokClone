@@ -3,8 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:tiktok_clone/TikTok/view/widgets/MediaPreviewScreen.dart';
-import 'package:tiktok_clone/TikTok/view/widgets/TikTokVideoPlayer.dart';
+import 'package:tiktok_clone/Chat/view/widgets/MediaPreviewScreen.dart';
+import 'package:tiktok_clone/TikTok/view/widgets/MediaVideoPlayer.dart';
 import 'package:video_player/video_player.dart';
 import 'package:tiktok_clone/Chat/controller/ChatProvider.dart';
 
@@ -197,10 +197,23 @@ class _MessageBubbleState extends State<MessageBubble> {
             children: [
               AspectRatio(
                 aspectRatio: 1,
-                child: TikTokVideoPlayer(videoUrl: url),
+                child: MediaVideoPlayer(videoUrl: url),
               ),
-              const Icon(Icons.play_circle_fill,
-                  color: Colors.white, size: 40),
+              IconButton(
+                onPressed:(){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => MediaPreviewScreen(
+                        mediaItems: mediaItems.cast<Map<String, dynamic>>(),
+                        initialIndex: index,
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.play_circle_fill,
+                    color: Colors.white, size: 40),
+              ),
             ],
           );
         } else {

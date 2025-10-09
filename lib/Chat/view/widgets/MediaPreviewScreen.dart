@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:tiktok_clone/TikTok/view/widgets/MediaVideoPlayer.dart';
 import 'package:tiktok_clone/TikTok/view/widgets/TikTokVideoPlayer.dart';
 
 class MediaPreviewScreen extends StatefulWidget {
@@ -49,7 +50,7 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
           final type = item['type'];
 
           if (type == 'video') {
-            return TikTokVideoPlayer(videoUrl: url);
+            return MediaVideoPlayer(videoUrl: url);
           } else {
             return Center(
               child: ClipRect(
