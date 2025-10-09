@@ -23,22 +23,11 @@ class _ChatUsersState extends State<ChatUsers> {
   @override
   void initState() {
     super.initState();
-    getCurrentUser();
+    setState(() {
+      loggedInUser =_auth.currentUser;
+    });
   }
 
-  void getCurrentUser() {
-    try {
-      final user = _auth.currentUser;
-      if (user != null) {
-        setState(() {
-          loggedInUser = user;
-        });
-        print("Logged in as: ${loggedInUser?.uid}");
-      }
-    } catch (e) {
-      print("Error getting current user: $e");
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
