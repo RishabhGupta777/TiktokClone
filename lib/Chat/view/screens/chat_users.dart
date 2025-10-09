@@ -10,7 +10,7 @@ final _firestore = FirebaseFirestore.instance;
 User? loggedInUser;
 
 class ChatUsers extends StatefulWidget {
-
+  static const String id = 'home_page';
 
   const ChatUsers({super.key});
   @override
@@ -18,7 +18,27 @@ class ChatUsers extends StatefulWidget {
 }
 
 class _ChatUsersState extends State<ChatUsers> {
+  final _auth = FirebaseAuth.instance;
 
+  @override
+  void initState() {
+    super.initState();
+    getCurrentUser();
+  }
+
+  void getCurrentUser() {
+    try {
+      final user = _auth.currentUser;
+      if (user != null) {
+        setState(() {
+          loggedInUser = user;
+        });
+        print("Logged in as: ${loggedInUser?.uid}");
+      }
+    } catch (e) {
+      print("Error getting current user: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
