@@ -36,7 +36,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           return
             Scaffold(
       appBar: AppBar(
-title: Text('${controller.user["name"]}'),
+title: Text( controller.user.isEmpty
+    ? '' //can be Loading... here
+    : controller.user['name'] ?? 'No Name',),
         centerTitle:false,
 
         actions: [
