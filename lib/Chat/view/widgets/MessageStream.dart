@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiktok_clone/Chat/controller/ChatProvider.dart';
+import 'package:tiktok_clone/Chat/controller/select_person_provider.dart';
 import 'package:tiktok_clone/Chat/model/message.dart';
 import 'package:tiktok_clone/Chat/view/widgets/message_bubble.dart';
 
@@ -22,6 +23,9 @@ class MessageStream extends StatelessWidget {
     }
 
     final chatRoomId = getChatRoomId(currentUser, receiver);
+
+    final selectPersonProvider = Provider.of<SelectPersonProvider>(context);
+    selectPersonProvider.getCurrentChatRoomId(chatRoomId);
 
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance

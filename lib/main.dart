@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:tiktok_clone/Chat/controller/ChatProvider.dart';
+import 'package:tiktok_clone/Chat/controller/select_person_provider.dart';
 import 'package:tiktok_clone/TikTok/view/screens/Home.dart';
 
 import 'TikTok/constants.dart';
@@ -19,6 +20,7 @@ void main()  async{
       MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (context) => ChatProvider()),
+          ChangeNotifierProvider(create: (context) => SelectPersonProvider()),
         ],
         child: const MyApp(), // Use 'const' with the constructor to improve performance.
       )

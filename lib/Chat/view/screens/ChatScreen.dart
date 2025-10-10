@@ -13,8 +13,6 @@ class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key, required this.receiver});
   final String receiver;
 
-  static const String id = 'chat_screen';
-
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
@@ -40,7 +38,7 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         actions: [
           if (chatProvider.isSelectionActive) ...[
-            //// Allow edit only if 1 message selected AND it’s mine
+            /// Allow edit only if 1 message selected AND it’s mine
             if (chatProvider.selectedMessageIds.length == 1 &&
                 chatProvider.selectedOwnership.values.first == true)
               IconButton(
@@ -109,11 +107,10 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
               ),
               onPressed: ()async {
-                final selectedChatIds = await Navigator.push(
+                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) =>  SelectPersonScreen()),
+                  MaterialPageRoute(builder: (_) =>  SelectPersonScreen(selectedMessageIds: chatProvider.selectedMessageIds,)),
                 );
-
               },
             ),
           ]

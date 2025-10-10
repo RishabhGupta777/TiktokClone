@@ -35,7 +35,7 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.transparent,
         title: Text("${_currentIndex + 1}/${mediaItems.length}"),
       ),
       body: PageView.builder(
