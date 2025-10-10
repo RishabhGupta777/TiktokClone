@@ -5,10 +5,13 @@ import 'package:flutter/foundation.dart';
 class SelectPersonProvider with ChangeNotifier {
   String currentChatRoomId = '';
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final _firestore = FirebaseFirestore.instance;
 
   /// Keep track of selected chatrooms
   final Set<String> _selectedChatRoomIds = {};
+  List<DocumentSnapshot> _mData = [];
 
+  List<DocumentSnapshot> getAllChatRooms() => _mData;
   Set<String> get selectedChatRoomIds => _selectedChatRoomIds;
 
   /// Select or unselect a chatroom
@@ -72,4 +75,17 @@ class SelectPersonProvider with ChangeNotifier {
       debugPrint("Error forwarding message: $e");
     }
   }
+
+
+  void getInitialAllChatRooms() {
+    _firestore
+        .collection('ChatRoom')
+        .where('users', arrayContains: _auth.currentUser!.uid)
+        .snapshots()
+        .listen((snapshot) {
+      _mData = snapshot.docs;
+      notifyListeners();
+    });
+  }
+
 }

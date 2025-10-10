@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:tiktok_clone/Chat/controller/ChatProvider.dart';
 import 'package:tiktok_clone/Chat/controller/select_person_provider.dart';
 
-final _firestore = FirebaseFirestore.instance;
+
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
 class SelectPersonScreen extends StatefulWidget {
@@ -24,6 +24,7 @@ class _SelectPersonScreenState extends State<SelectPersonScreen> {
   void initState() {
     super.initState();
     loggedInUser = _auth.currentUser;
+    context.read<SelectPersonProvider>().getInitialAllChatRooms();
   }
 
 
@@ -54,17 +55,9 @@ class _SelectPersonScreenState extends State<SelectPersonScreen> {
       body: SafeArea(
         child: loggedInUser == null
             ? const Center(child: Text("Not logged in"))
-            : StreamBuilder<QuerySnapshot>(
-          stream: _firestore
-              .collection('ChatRoom')
-              .where('users', arrayContains: loggedInUser!.uid)
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            final chatRooms = snapshot.data!.docs;
+            : Consumer<SelectPersonProvider>(
+          builder: (context, provider,child) {
+            final chatRooms = provider.getAllChatRooms();
             if (chatRooms.isEmpty) {
               return const Center(child: Text("No chats yet"));
             }
@@ -73,13 +66,13 @@ class _SelectPersonScreenState extends State<SelectPersonScreen> {
               itemCount: chatRooms.length,
               itemBuilder: (context, index) {
                 final chatRoom = chatRooms[index];
+                final chatRoomData = chatRoom.data() as Map<String, dynamic>;
                 final users =
                 List<String>.from(chatRoom['users'] ?? []);
-                final otherUser = users
-                    .firstWhere((u) => u != loggedInUser!.uid);
+                final otherUser = users.firstWhere((u) => u != loggedInUser!.uid);
 
                 return UserBubble(
-                  chatRoom: chatRoom,
+                  chatRoom: chatRoom as QueryDocumentSnapshot,
                   otherUser: otherUser,
                 );
               },
