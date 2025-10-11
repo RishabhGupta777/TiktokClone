@@ -20,6 +20,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final textEditingController = TextEditingController();
   final ImagePicker picker = ImagePicker();
+  final textFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -59,6 +60,8 @@ class _ChatScreenState extends State<ChatScreen> {
                 onPressed: () {
                   final msg = chatProvider.selectedMessages.values.first ?? "";
                   textEditingController.text = msg;
+                  // Request focus and show keyboard
+                  FocusScope.of(context).requestFocus(textFocusNode);
                 },
               ),
 
@@ -172,6 +175,7 @@ class _ChatScreenState extends State<ChatScreen> {
               children: [
                 Expanded(
                   child: TextField(
+                    focusNode: textFocusNode,
                     controller: textEditingController,
                     onChanged: chatProvider.updateMessageText,
                     decoration: InputDecoration(
