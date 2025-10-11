@@ -41,6 +41,8 @@ class _ChatScreenState extends State<ChatScreen> {
       // Clear selection before leaving
       if (chatProvider.isSelectionActive) {
         chatProvider.clearSelection();
+        chatProvider.setEditing(false);
+        textEditingController.clear();
         return false; // prevent immediate pop
       } else {
         chatProvider.clearSelection(); // also clear on normal back
@@ -50,7 +52,7 @@ class _ChatScreenState extends State<ChatScreen> {
     child: Scaffold(
       appBar: AppBar(
         actions: [
-          if (chatProvider.isSelectionActive) ...[
+          if (chatProvider.isSelectionActive && !chatProvider.isEditing) ...[
 
             /// Allow edit only if 1 message selected AND it’s mine
             if (chatProvider.selectedMessageIds.length == 1 &&
@@ -62,6 +64,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   textEditingController.text = msg;
                   // Request focus and show keyboard
                   FocusScope.of(context).requestFocus(textFocusNode);
+                  chatProvider.setEditing(true);
                 },
               ),
 
@@ -134,7 +137,11 @@ class _ChatScreenState extends State<ChatScreen> {
         leading: chatProvider.isSelectionActive
             ? IconButton(
                 icon: const Icon(Icons.close),
-                onPressed: () => chatProvider.clearSelection(),
+                onPressed: () {
+                  chatProvider.clearSelection();
+                  chatProvider.setEditing(false);
+                  textEditingController.clear();
+                  },
               )
             : IconButton(
                 icon: const Icon(Icons.arrow_back),
@@ -144,7 +151,8 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
         titleSpacing:
             -16, // removes extra left padding so avatar comes right after back arrow
-        title: chatProvider.isSelectionActive
+        title:chatProvider.isEditing ? Text('Edit message') :
+        chatProvider.isSelectionActive
             ? Text("${chatProvider.selectedMessageIds.length} selected")
             : Row(
                 children: [

@@ -17,6 +17,14 @@ class ChatProvider with ChangeNotifier {
   String? userProfileUrl;
   String? userName;
 
+  bool _isEditing = false;
+  bool get isEditing => _isEditing;
+
+  void setEditing(bool value) {
+    _isEditing = value;
+    notifyListeners();
+  }
+
   // Multiple selection
   final List<String> selectedMessageIds = [];
   final Map<String, String> selectedMessages = {}; // id → text
@@ -68,6 +76,7 @@ class ChatProvider with ChangeNotifier {
     selectedMessages.clear();
     selectedOwnership.clear();
     isMe = null;
+    _isEditing = false;
     notifyListeners();
   }
 
