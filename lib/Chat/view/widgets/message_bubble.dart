@@ -250,23 +250,29 @@ class _MessageBubbleState extends State<MessageBubble> {
           );
         }
 
-        return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => MediaPreviewScreen(
-                    mediaItems: mediaItems.cast<Map<String, dynamic>>(),
-                    initialIndex: index,
-                  ),
-                ),
-              );
-            },
+        return Consumer<ChatProvider>(
+          builder: (context,provider,child) {
+            return GestureDetector(
+                onTap: () {
+                  provider.isSelectionActive
+                      ? provider.selectMessage(widget.id, widget.text, widget.isMe)
+                      : Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => MediaPreviewScreen(
+                        mediaItems: mediaItems.cast<Map<String, dynamic>>(),
+                        initialIndex: index,
+                      ),
+                    ),
+                  );
+                },
 
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: mediaWidget,
-        ),);
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: mediaWidget,
+            ),);
+          }
+        );
       },
     );
   }

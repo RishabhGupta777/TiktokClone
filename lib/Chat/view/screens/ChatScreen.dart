@@ -30,14 +30,27 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     final chatProvider = Provider.of<ChatProvider>(context);
-
-    return Scaffold(
+    return WillPopScope(
+        onWillPop: () async {
+      // Clear selection before leaving
+      if (chatProvider.isSelectionActive) {
+        chatProvider.clearSelection();
+        return false; // prevent immediate pop
+      } else {
+        chatProvider.clearSelection(); // also clear on normal back
+        return true; // allow pop
+      }
+    },
+    child: Scaffold(
       appBar: AppBar(
         actions: [
           if (chatProvider.isSelectionActive) ...[
+
             /// Allow edit only if 1 message selected AND it’s mine
             if (chatProvider.selectedMessageIds.length == 1 &&
                 chatProvider.selectedOwnership.values.first == true)
@@ -142,7 +155,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           )
                         : const Icon(Icons.person),
                   ),
-                  Text(chatProvider.userName ?? widget.receiver),
+                  Text(chatProvider.userName ?? " "),
                 ],
               ),
       ),
@@ -270,6 +283,6 @@ class _ChatScreenState extends State<ChatScreen> {
           )
         ],
       ),
-    );
+    ),);
   }
 }

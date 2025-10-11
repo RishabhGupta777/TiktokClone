@@ -147,7 +147,7 @@ class _UserBubbleState extends State<UserBubble> {
         final data = userDoc.data() as Map<String, dynamic>?;
         setState(() {
           userProfileUrl = data?['profilePic'];
-          userName = data?['name'] ?? widget.otherUser;
+          userName = data?['name'] ?? ' ';
         });
       }
     } catch (e) {
@@ -203,7 +203,7 @@ class _UserBubbleState extends State<UserBubble> {
           child: Icon(Icons.person),
         ),
         title: Text(
-          userName ?? widget.otherUser,
+          userName ?? " ",
           style: const TextStyle(fontWeight: FontWeight.w500),
         ),
         subtitle: Text(
