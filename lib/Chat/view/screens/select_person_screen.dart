@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiktok_clone/Chat/controller/ChatProvider.dart';
 import 'package:tiktok_clone/Chat/controller/select_person_provider.dart';
-
+import 'package:tiktok_clone/TikTok/constants.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -27,60 +27,76 @@ class _SelectPersonScreenState extends State<SelectPersonScreen> {
     context.read<SelectPersonProvider>().getInitialAllChatRooms();
   }
 
-
   @override
   Widget build(BuildContext context) {
     final selectPersonProvider = Provider.of<SelectPersonProvider>(context);
     final chatProvider = Provider.of<ChatProvider>(context, listen: false);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          selectPersonProvider.selectedChatRoomIds.isEmpty
-              ? 'Forward message to'
-              : '${selectPersonProvider.selectedChatRoomIds.length} selected',
-        ),
-        actions: [
-          if (selectPersonProvider.selectedChatRoomIds.isNotEmpty)
-            IconButton(
-              icon: const Icon(Icons.check),
-              onPressed: () async{
+        appBar: AppBar(
+          leading: IconButton(
+              onPressed: (){
+                selectPersonProvider.clearSelectedChatRooms();
                 Navigator.pop(context);
-                await selectPersonProvider.forwardMessage(widget.selectedMessageIds);
-                chatProvider.clearSelection();
-              },
-            ),
-        ],
-      ),
-      body: SafeArea(
-        child: loggedInUser == null
-            ? const Center(child: Text("Not logged in"))
-            : Consumer<SelectPersonProvider>(
-          builder: (context, provider,child) {
-            final chatRooms = provider.getAllChatRooms();
-            if (chatRooms.isEmpty) {
-              return const Center(child: Text("No chats yet"));
-            }
-
-            return ListView.builder(
-              itemCount: chatRooms.length,
-              itemBuilder: (context, index) {
-                final chatRoom = chatRooms[index];
-                final chatRoomData = chatRoom.data() as Map<String, dynamic>;
-                final users =
-                List<String>.from(chatRoom['users'] ?? []);
-                final otherUser = users.firstWhere((u) => u != loggedInUser!.uid);
-
-                return UserBubble(
-                  chatRoom: chatRoom as QueryDocumentSnapshot,
-                  otherUser: otherUser,
-                );
-              },
-            );
-          },
+              }
+              , icon: Icon(Icons.arrow_back)),
+          title: Text(
+            selectPersonProvider.selectedChatRoomIds.isEmpty
+                ? 'Forward message to'
+                : '${selectPersonProvider.selectedChatRoomIds.length} selected',
+          ),
+          actions: [
+              IconButton(
+                icon: const Icon(Icons.search),
+                onPressed: () async {
+                },
+              ),
+          ],
         ),
-      ),
-    );
+        body: SafeArea(
+          child: loggedInUser == null
+              ? const Center(child: Text("Not logged in"))
+              : Consumer<SelectPersonProvider>(
+                  builder: (context, provider, child) {
+                    final chatRooms = provider.getAllChatRooms();
+                    if (chatRooms.isEmpty) {
+                      return const Center(child: Text("No chats yet"));
+                    }
+
+                    return ListView.builder(
+                      itemCount: chatRooms.length,
+                      itemBuilder: (context, index) {
+                        final chatRoom = chatRooms[index];
+                        final chatRoomData =
+                            chatRoom.data() as Map<String, dynamic>;
+                        final users =
+                            List<String>.from(chatRoom['users'] ?? []);
+                        final otherUser =
+                            users.firstWhere((u) => u != loggedInUser!.uid);
+
+                        return UserBubble(
+                          chatRoom: chatRoom as QueryDocumentSnapshot,
+                          otherUser: otherUser,
+                        );
+                      },
+                    );
+                  },
+                ),
+        ),
+        floatingActionButton:
+            selectPersonProvider.selectedChatRoomIds.isNotEmpty
+                ? FloatingActionButton(
+                    backgroundColor: primary,
+                    tooltip: 'Send message to Selected Person',
+                    child: Icon(Icons.send),
+                    onPressed: () async {
+                      Navigator.pop(context);
+                      await selectPersonProvider
+                          .forwardMessage(widget.selectedMessageIds);
+                      chatProvider.clearSelection();
+                    },
+                  )
+                : null);
   }
 }
 
@@ -131,7 +147,7 @@ class _UserBubbleState extends State<UserBubble> {
   Widget build(BuildContext context) {
     final provider = Provider.of<SelectPersonProvider>(context);
     final isSelected =
-    provider.selectedChatRoomIds.contains(widget.chatRoom.id);
+        provider.selectedChatRoomIds.contains(widget.chatRoom.id);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
@@ -139,13 +155,13 @@ class _UserBubbleState extends State<UserBubble> {
         onTap: () => provider.toggleChatRoomSelection(widget.chatRoom.id),
         leading: userProfileUrl != null
             ? CircleAvatar(
-          radius: 25,
-          backgroundImage: CachedNetworkImageProvider(userProfileUrl!),
-        )
+                radius: 25,
+                backgroundImage: CachedNetworkImageProvider(userProfileUrl!),
+              )
             : const CircleAvatar(
-          radius: 25,
-          child: Icon(Icons.person),
-        ),
+                radius: 25,
+                child: Icon(Icons.person),
+              ),
         title: Text(
           userName ?? widget.otherUser,
           style: const TextStyle(fontWeight: FontWeight.w500),
