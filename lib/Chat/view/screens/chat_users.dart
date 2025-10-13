@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:tiktok_clone/Chat/controller/select_person_provider.dart';
 import 'package:tiktok_clone/Chat/view/screens/ChatScreen.dart';
 import 'package:tiktok_clone/TikTok/view/screens/search_screen.dart';
 
@@ -177,6 +179,7 @@ class _UserBubbleState extends State<UserBubble> {
 
   @override
   Widget build(BuildContext context) {
+    final selectPersonProvider = Provider.of<SelectPersonProvider>(context);
     final time = lastTimestamp != null
         ? TimeOfDay.fromDateTime(lastTimestamp!.toDate()).format(context)
         : '';
@@ -185,6 +188,7 @@ class _UserBubbleState extends State<UserBubble> {
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: ListTile(
         onTap: () {
+          selectPersonProvider.getCurrentChatRoomId(widget.chatRoom.id);
           Navigator.push(
             context,
             MaterialPageRoute(

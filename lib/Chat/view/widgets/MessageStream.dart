@@ -24,9 +24,6 @@ class MessageStream extends StatelessWidget {
 
     final chatRoomId = getChatRoomId(currentUser, receiver);
 
-    final selectPersonProvider = Provider.of<SelectPersonProvider>(context);
-    selectPersonProvider.getCurrentChatRoomId(chatRoomId);
-
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('ChatRoom')
