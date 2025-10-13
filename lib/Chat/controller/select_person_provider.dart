@@ -9,9 +9,6 @@ class SelectPersonProvider with ChangeNotifier {
 
   /// Keep track of selected chatrooms
   final Set<String> _selectedChatRoomIds = {};
-  List<DocumentSnapshot> _mData = [];
-
-  List<DocumentSnapshot> getAllChatRooms() => _mData;
   Set<String> get selectedChatRoomIds => _selectedChatRoomIds;
 
   /// Select or unselect a chatroom
@@ -76,6 +73,10 @@ class SelectPersonProvider with ChangeNotifier {
     }
   }
 
+
+  ///give list of all recent chat user list
+  List<DocumentSnapshot> _mData = [];
+  List<DocumentSnapshot> getAllChatRooms() => _mData;
 
   void getInitialAllChatRooms() {
     _firestore
