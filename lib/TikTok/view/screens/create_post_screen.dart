@@ -2,9 +2,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tiktok_clone/Chat/view/widgets/MediaPreviewScreen.dart';
 import 'package:tiktok_clone/TikTok/constants.dart';
 import 'package:tiktok_clone/TikTok/controller/post_upload_controller.dart';
 import 'package:tiktok_clone/TikTok/controller/profile_info_controller.dart';
+import 'package:tiktok_clone/TikTok/view/widgets/MediaVideoPlayer.dart';
 import 'package:tiktok_clone/TikTok/view/widgets/button.dart';
 import 'package:tiktok_clone/TikTok/view/widgets/text_input.dart';
 import 'package:video_player/video_player.dart';
@@ -21,58 +23,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
  PostUploadController postUploadController = Get.put(PostUploadController());
  final ProfileInfoController profileInfoController = Get.put(ProfileInfoController());
 
- XFile? selectedFile;
-   String? fileType;   // "image" or "video"
-   VideoPlayerController? _videoController;
-   String path=" ";
-
-  // ------------------- MEDIA PICK (PHOTO or VIDEO) -------------------
-  mediaPick(ImageSource src, BuildContext context) async {
-
-   final ImagePicker picker = ImagePicker();
-   XFile? file;
-
-   if (src == ImageSource.gallery) {
-   // Gallery can be both photo or video
-   file = await picker.pickMedia();
-   } else {
-   // Camera: You must choose explicitly image or video
-   file = await picker.pickImage(source: ImageSource.camera);
-   /// OR: file = await picker.pickVideo(source: ImageSource.camera);
-   }
-
-   if (file != null) {
-   path = file.path;
-   final String extension = path.split('.').last.toLowerCase();
-
-      // Check if image or video
-      if (["jpg", "jpeg", "png", "gif", "heic", "webp"].contains(extension)) {
-        // It's an image
-        Get.snackbar("Photo Selected", path);
-        setState(() {
-          selectedFile = file;
-          fileType = "image";
-          _videoController?.dispose();
-          _videoController = null;
-        });
-
-      } else {
-        // It's a video
-        Get.snackbar("Video Selected", path);
-        setState(() {
-          selectedFile = file;
-          fileType = "video";
-          _videoController = VideoPlayerController.file(File(path))
-            ..initialize().then((_) {
-              setState(() {}); // Refresh once video is ready
-              _videoController!.play();
-            });
-        });
-      }
-    } else {
-      Get.snackbar("Error", "No media selected");
-    }
-  }
 
  @override
  void initState() {
@@ -85,19 +35,16 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Create post"),
-        leading: Icon(Icons.arrow_back_ios),
+        leading: IconButton(
+            onPressed: (){
+             postUploadController.mediaFiles.clear();
+              Navigator.pop(context);
+            }
+            , icon: Icon(Icons.arrow_back)),
         actions: [
           TButton(text:"POST",onTap: (){
-            if (selectedFile == null) {
-              Get.snackbar("Error", "Please select an image or video first");
-              return;
-            }
-
-            // Call your upload controller with both file & type
             postUploadController.uploadPost(
-              captionController.text,
-              File(path),
-              fileType!, // "image" or "video"
+              captionController.text// "image" or "video"
             );
           },backgroundColor:primary,width: 75,height: 40,radius: 8,),
         ],
@@ -149,48 +96,132 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   myIcon:Icons.edit_outlined,
                   myLabelText: "What's on your mind?"),
             ),
+            /// Selected Media Preview
+            Obx(() {
+              if (postUploadController.mediaFiles.isEmpty) {
+                return const SizedBox();
+              }
+              return _buildMediaGrid(context);
+            }),
 
-            /// SELECTED POST
-            if (selectedFile != null)
-              Container(
-                width: double.infinity,
-                height: 350,
-                color: Colors.black12,
-                child: fileType == "image"
-                    ? Image.file(File(selectedFile!.path), fit: BoxFit.cover)
-                    : (_videoController != null &&
-                    _videoController!.value.isInitialized)
-                    ? AspectRatio(
-                  aspectRatio: _videoController!.value.aspectRatio,
-                  child: VideoPlayer(_videoController!),
-                )
-                    : const Center(child: CircularProgressIndicator()),
-              )
-            else
-              const Padding(
-                padding: EdgeInsets.all(20.0),
-                child: Text(
-                  "No media selected",
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ),
-
-            ///SELECT PHOTO OR VIDEO
-
+            /// Pick Image/Video Options
             ListTile(
-              leading:Icon(Icons.photo_library_outlined),
-              title: Text("Photo/Video"),
-              onTap: () => mediaPick(ImageSource.gallery, context),
+              leading: const Icon(Icons.photo_library_outlined),
+              title: const Text("Photo/Video"),
+              onTap: () => postUploadController.pickMultipleMedia(),
             ),
             ListTile(
-              leading:Icon(Icons.camera),
-              title: Text("camera"),
-              onTap: () => mediaPick(ImageSource.camera, context),
-            )
-
+              leading: const Icon(Icons.camera_alt),
+              title: const Text("Take Photo"),
+              onTap: () => postUploadController.pickCamera(),
+            ),
+            ListTile(
+              leading: const Icon(Icons.videocam),
+              title: const Text("Take Video"),
+              onTap: () => postUploadController.pickVideo(),
+            ),
           ],
         ),
       ),
     );
   }
+
+ /// Media Grid (Local Preview)
+ Widget _buildMediaGrid(BuildContext context) {
+   final mediaItems = postUploadController.mediaFiles;
+   int itemCount = mediaItems.length;
+
+   return Padding(
+     padding: const EdgeInsets.all(8.0),
+     child: GridView.builder(
+       shrinkWrap: true,
+       physics: const NeverScrollableScrollPhysics(),
+       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+         crossAxisCount: itemCount == 1 ? 1 : 2,
+         mainAxisSpacing: 4,
+         crossAxisSpacing: 4,
+       ),
+       itemCount: itemCount > 4 ? 4 : itemCount,
+       itemBuilder: (context, index) {
+         final file = mediaItems[index];
+         final isVideo = file.path.endsWith('.mp4');
+
+         Widget mediaWidget;
+
+         if (isVideo) {
+           final controller = VideoPlayerController.file(File(file.path));
+           mediaWidget = FutureBuilder(
+             future: controller.initialize(),
+             builder: (context, snapshot) {
+               if (snapshot.connectionState == ConnectionState.done) {
+                 return Stack(
+                   alignment: Alignment.center,
+                   children: [
+                     AspectRatio(
+                       aspectRatio: controller.value.aspectRatio,
+                       child: VideoPlayer(controller),
+                     ),
+                     const Icon(Icons.play_circle_fill,
+                         color: Colors.white, size: 40),
+                   ],
+                 );
+               } else {
+                 return const Center(
+                     child: CircularProgressIndicator(strokeWidth: 2));
+               }
+             },
+           );
+         } else {
+           mediaWidget = Image.file(
+             File(file.path),
+             fit: BoxFit.cover,
+           );
+         }
+
+         // Show "+N" overlay if more than 4 media
+         if (index == 3 && itemCount > 4) {
+           return Stack(
+             fit: StackFit.expand,
+             children: [
+               mediaWidget,
+               Container(
+                 color: Colors.black54,
+                 child: Center(
+                   child: Text(
+                     "+${itemCount - 4}",
+                     style: const TextStyle(
+                       color: Colors.white,
+                       fontSize: 26,
+                       fontWeight: FontWeight.bold,
+                     ),
+                   ),
+                 ),
+               ),
+             ],
+           );
+         }
+
+         return GestureDetector(
+           onTap: () {
+             Navigator.push(
+               context,
+               MaterialPageRoute(
+                 builder: (_) => MediaPreviewScreen(
+                   mediaItems: mediaItems
+                       .map((x) => {"url": x.path, "type": x.path.endsWith('.mp4') ? "video" : "image"})
+                       .toList(),
+                   initialIndex: index,
+                 ),
+               ),
+             );
+           },
+           child: ClipRRect(
+             borderRadius: BorderRadius.circular(10),
+             child: mediaWidget,
+           ),
+         );
+       },
+     ),
+   );
+ }
 }

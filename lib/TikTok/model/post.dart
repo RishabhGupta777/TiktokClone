@@ -9,24 +9,20 @@ class Post{
   int commentsCount;
   int shareCount;
   String caption;
-  String postUrl;
-  String thumbnail;
+  List<Map<String,String>> mediaUrl; //here two maps exist one for url and another for type-->each item: {"url": "...", "type": "..."}
   String profilePic;
-  String type;
   final datePub;
 
   Post({
     required this.username,
     required this.uid,
-    required this.thumbnail,
     required this.caption,
     required this.commentsCount,
     required this.id,
     required this.likes,
     required this.profilePic,
     required this.shareCount,
-    required this.postUrl,
-    required this.type,
+    required this.mediaUrl,
     required this.datePub,
   });
 
@@ -39,9 +35,7 @@ class Post{
     "commentsCount" : commentsCount,
     "shareCount" : shareCount,
     "caption" : caption,
-    "postUrl" : postUrl,
-    "thumbnail" : thumbnail,
-    "type": type,
+    "mediaUrl":mediaUrl,
     "datePub" : datePub,
   };
 
@@ -56,10 +50,10 @@ class Post{
         commentsCount:  sst['commentsCount'],
         caption:  sst["caption"],
         shareCount: sst["shareCount"],
-        thumbnail: sst["thumbnail"],
         profilePic: sst["profilePic"],
-        postUrl: sst["postUrl"],
-       type: sst["type"] ?? "image",
+      mediaUrl: (sst["mediaUrl"] as List)
+          .map((e) => Map<String, String>.from(e))
+          .toList(),
        datePub : sst["datePub"],
     );
   }
