@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:tiktok_clone/Chat/view/screens/ChatScreen.dart';
 import 'package:tiktok_clone/TikTok/controller/auth_controller.dart';
 import 'package:tiktok_clone/TikTok/controller/profile_controller.dart';
+import 'package:tiktok_clone/TikTok/view/screens/edit_profile_screen.dart';
 import 'package:tiktok_clone/TikTok/view/screens/followers_screen.dart';
 import 'package:tiktok_clone/TikTok/view/screens/followings_screen.dart';
 
@@ -45,7 +46,7 @@ title: Text( controller.user.isEmpty
           IconButton(
             onPressed: (){
               widget.uid == FirebaseAuth.instance.currentUser!.uid ?
-                Get.snackbar("NanoGram App", "Current Version 1.0"):
+              authController.signOut():   //Get.snackbar("NanoGram App", "Current Version 1.0")
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -118,8 +119,8 @@ title: Text( controller.user.isEmpty
                           ],
                         ),
                       ),
-                      SizedBox(width: 25
-                        ,),Column(
+                      /*SizedBox(width: 25,),
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -128,7 +129,7 @@ title: Text( controller.user.isEmpty
                           Text("Likes" , style: TextStyle(fontSize: 14 , fontWeight: FontWeight.w400))
                         ],
                       ),
-
+                      */
                     ],
                   ),
 
@@ -138,7 +139,12 @@ title: Text( controller.user.isEmpty
                     onTap: (){
 
                       if(widget.uid == FirebaseAuth.instance.currentUser!.uid){
-                        authController.signOut();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditProfileScreen(),
+                          ),
+                        );
                       } else{
 
                         controller.followUser();
@@ -157,7 +163,7 @@ title: Text( controller.user.isEmpty
                       ),
 
                       child: Center(
-                        child : Text( widget.uid == FirebaseAuth.instance.currentUser!.uid ?  "Sign Out" :
+                        child : Text( widget.uid == FirebaseAuth.instance.currentUser!.uid ?  "Edit Profile" :
                         controller.user['isFollowing'] ? "Following" : "Follow"
                         )
                       ),
