@@ -63,28 +63,15 @@ class EditProfileController extends GetxController {
     _firestore.collection('users').doc(_auth.currentUser!.uid).set(
         {'name': newName},
         SetOptions(merge: true));
-    profileController.getUserDat();
+        profileController.getUserDat();
   }
 
-  Rx<String> _uid = "".obs;
-  Rx<String> about="".obs;
-
-  updateUseId(String uid){
-    _uid.value = uid;
-    getUserInfo();
-  }
-
-  getUserInfo()async{
-    DocumentSnapshot userDoc  = await _firestore.collection('usersInfo').doc(_uid.value).get();
-    about.value = userDoc['about'];
-
-  }
 
   void updateAbout(String newAbout){
     _firestore.collection('usersInfo').doc(_auth.currentUser!.uid).set(
         {'about': newAbout},
         SetOptions(merge: true));
-        getUserInfo();
+        profileController.getUserDat();
   }
 
 }

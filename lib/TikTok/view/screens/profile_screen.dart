@@ -21,21 +21,18 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final ProfileController profileController = Get.put(ProfileController());
   final AuthController authController = Get.put(AuthController());
-  EditProfileController editProfileController =
-      Get.put(EditProfileController());
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     profileController.updateUseId(widget.uid);
-    editProfileController.updateUseId(widget.uid);
   }
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ProfileController>(
-        init: ProfileController(),
+        // init: ProfileController(),
         builder: (controller) {
           return Scaffold(
               appBar: AppBar(
@@ -189,7 +186,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               SizedBox(
                                 height: 30,
                               ),
-                              Obx((){return Text(editProfileController.about.value);}),
+                              Text(controller.user['about']),
                               SizedBox(
                                 height: 30,
                               ),

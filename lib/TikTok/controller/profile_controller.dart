@@ -27,13 +27,22 @@ Map<String, dynamic> get user => _user.value;
     }
 
     DocumentSnapshot userDoc  = await FirebaseFirestore.instance.collection("users").doc(_uid.value).get();
+    DocumentSnapshot userInfoDoc  = await FirebaseFirestore.instance.collection("usersInfo").doc(_uid.value).get();
 
     String name = userDoc['name'];
     String profilePic = userDoc['profilePic'];
+    String about = " ";
     int likes = 0;
     int followers = 0;
     int following  = 0;
     bool isFollowing = false;
+
+    ///For about
+    if (userInfoDoc.exists) {
+      // only access field if the document exists
+      final data = userInfoDoc.data() as Map<String, dynamic>;
+      about = data['about'] ?? " ";
+    }
 
     for (var item in myVideos.docs){
 
@@ -80,6 +89,7 @@ Map<String, dynamic> get user => _user.value;
    'likes' : likes.toString(),
    'profilePic' : profilePic,
    'name' : name,
+   'about':about,
    'isFollowing' : isFollowing,
    'thumbnails' : thumbnails
  };

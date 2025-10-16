@@ -186,7 +186,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
                 Information(
                   onTap:(){
-                    textEditingController.text=editProfileController.about.value;
+                    textEditingController.text=profileController.user['about'];
                     _editInfo(
                         "About",
                             () {
@@ -197,7 +197,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   },
                   icon:const Icon(Icons.info_outline),
                   infoName:'About',
-                  info: editProfileController.about.value,
+                  info: profileController.user['about'],
                 ),
                 Information(
                   onTap:(){},
