@@ -3,12 +3,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tiktok_clone/Chat/view/screens/ChatScreen.dart';
+import 'package:tiktok_clone/TikTok/constants.dart';
 import 'package:tiktok_clone/TikTok/controller/auth_controller.dart';
 import 'package:tiktok_clone/TikTok/controller/edit_profile_controller.dart';
 import 'package:tiktok_clone/TikTok/controller/profile_controller.dart';
 import 'package:tiktok_clone/TikTok/view/screens/edit_profile_screen.dart';
 import 'package:tiktok_clone/TikTok/view/screens/followers_screen.dart';
 import 'package:tiktok_clone/TikTok/view/screens/followings_screen.dart';
+import 'package:tiktok_clone/TikTok/view/widgets/button.dart';
 
 class ProfileScreen extends StatefulWidget {
   String uid;
@@ -37,7 +39,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           return Scaffold(
               appBar: AppBar(
                 title: Text(
-                  controller.user.isEmpty
+                  controller.isLoading.value
                       ? '' //can be Loading... here
                       : controller.user['name'] ?? 'No Name',
                 ),
@@ -64,195 +66,197 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   )
                 ],
               ),
-              body: controller.user.isEmpty
+              body: controller.isLoading.value //controller.user.isEmpty pahle tha
                   ? Center(
                       child: CircularProgressIndicator(),
                     )
                   : SingleChildScrollView(
                       child: SafeArea(
-                        child: Padding(
-                          padding: const EdgeInsets.all(30.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(30.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  CircleAvatar(
-                                    radius: 55, // Adjust the size
-                                    backgroundColor: Colors.grey[200],
-                                    backgroundImage: null,
-                                    child: CachedNetworkImage(
-                                      imageUrl:
-                                          profileController.user['profilePic'],
-                                      imageBuilder: (context, imageProvider) =>
-                                          CircleAvatar(
-                                        radius: 55,
-                                        backgroundImage: imageProvider,
-                                      ),
-                                      placeholder: (context, url) =>
-                                          const CircularProgressIndicator(),
-                                      errorWidget: (context, url, error) =>
-                                          const Icon(Icons.error),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 40,
-                                  ),
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      InkWell(
-                                        onTap: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      FollowersScreen(
-                                                          uid: widget.uid)));
-                                        },
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              controller.user['followers'],
-                                              style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.w700),
-                                            ),
-                                            SizedBox(
-                                              height: 2,
-                                            ),
-                                            Text("Followers",
-                                                style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight:
-                                                        FontWeight.w400))
-                                          ],
+                                      CircleAvatar(
+                                        radius: 55, // Adjust the size
+                                        backgroundColor: Colors.grey[200],
+                                        backgroundImage: null,
+                                        child: CachedNetworkImage(
+                                          imageUrl:
+                                              profileController.user['profilePic'],
+                                          imageBuilder: (context, imageProvider) =>
+                                              CircleAvatar(
+                                            radius: 55,
+                                            backgroundImage: imageProvider,
+                                          ),
+                                          placeholder: (context, url) =>
+                                              const CircularProgressIndicator(),
+                                          errorWidget: (context, url, error) =>
+                                              const Icon(Icons.error),
                                         ),
                                       ),
                                       SizedBox(
-                                        width: 25,
+                                        width: 40,
                                       ),
-                                      InkWell(
-                                        onTap: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      FollowingsScreen(
-                                                          uid: widget.uid)));
-                                        },
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              controller.user['following'],
-                                              style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.w700),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          InkWell(
+                                            onTap: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          FollowersScreen(
+                                                              uid: widget.uid)));
+                                            },
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  controller.user['followers'],
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight: FontWeight.w700),
+                                                ),
+                                                SizedBox(
+                                                  height: 2,
+                                                ),
+                                                Text("Followers",
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w400))
+                                              ],
                                             ),
-                                            SizedBox(
-                                              height: 2,
+                                          ),
+                                          SizedBox(
+                                            width: 25,
+                                          ),
+                                          InkWell(
+                                            onTap: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          FollowingsScreen(
+                                                              uid: widget.uid)));
+                                            },
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  controller.user['following'],
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight: FontWeight.w700),
+                                                ),
+                                                SizedBox(
+                                                  height: 2,
+                                                ),
+                                                Text("Followings",
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w400))
+                                              ],
                                             ),
-                                            Text("Followings",
-                                                style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight:
-                                                        FontWeight.w400))
-                                          ],
-                                        ),
+                                          ),
+                                          /*SizedBox(width: 25,),
+                                                            Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(controller.user['likes'] , style: TextStyle(fontSize: 20 , fontWeight: FontWeight.w700),),
+                                    SizedBox(height:2,),
+                                    Text("Likes" , style: TextStyle(fontSize: 14 , fontWeight: FontWeight.w400))
+                                  ],
+                                                            ),
+                                                            */
+                                        ],
                                       ),
-                                      /*SizedBox(width: 25,),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(controller.user['likes'] , style: TextStyle(fontSize: 20 , fontWeight: FontWeight.w700),),
-                                SizedBox(height:2,),
-                                Text("Likes" , style: TextStyle(fontSize: 14 , fontWeight: FontWeight.w400))
-                              ],
-                            ),
-                            */
                                     ],
+                                  ),
+                                  controller.user['about'].trim().isEmpty
+                                      ? const SizedBox.shrink()
+                                      : Column(
+                                    children: [
+                                      const SizedBox(height: 30),
+                                      Text(controller.user['about']),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 30,
+                                  ),
+                                  TButton(
+                                    height: 35,
+                                    width: 130,
+                                    radius: 8,
+                                    backgroundColor:primary,
+                                    onTap: () {
+                                      if (widget.uid ==
+                                          FirebaseAuth.instance.currentUser!.uid) {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                EditProfileScreen(),
+                                          ),
+                                        );
+                                      } else {
+                                        controller.followUser();
+                                      }
+                                    },
+                                    text:widget.uid ==
+                                            FirebaseAuth
+                                                .instance.currentUser!.uid
+                                        ? "Edit Profile"
+                                        : controller.user['isFollowing']
+                                            ? "Following"
+                                            : "Follow",
                                   ),
                                 ],
                               ),
-                              SizedBox(
-                                height: 30,
-                              ),
-                              Text(controller.user['about']),
-                              SizedBox(
-                                height: 30,
-                              ),
-                              InkWell(
-                                onTap: () {
-                                  if (widget.uid ==
-                                      FirebaseAuth.instance.currentUser!.uid) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            EditProfileScreen(),
-                                      ),
-                                    );
-                                  } else {
-                                    controller.followUser();
-                                  }
-                                },
-                                child: Container(
-                                  width: 150,
-                                  height: 50,
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.white60, width: 0.6),
-                                      borderRadius: BorderRadius.circular(10)),
-                                  child: Center(
-                                      child: Text(widget.uid ==
-                                              FirebaseAuth
-                                                  .instance.currentUser!.uid
-                                          ? "Edit Profile"
-                                          : controller.user['isFollowing']
-                                              ? "Following"
-                                              : "Follow")),
-                                ),
-                              ),
-                              SizedBox(height: 25,),
-                              Divider(
-                                // indent: 30,
-                                // endIndent: 30,
-                                thickness: 2,
-                              ),
-                              SizedBox(
-                                height: 50,
-                              ),
-                              GridView.builder(
-                                  physics: NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 2,
-                                          childAspectRatio: 1,
-                                          crossAxisSpacing: 5),
-                                  itemCount:
-                                      controller.user['thumbnails'].length,
-                                  itemBuilder: (context, index) {
-                                    String thumbnail =
-                                        controller.user['thumbnails'][index];
-                                    return CachedNetworkImage(
-                                      fit: BoxFit.cover,
-                                      imageUrl: thumbnail,
-                                      errorWidget: (context, url, error) =>
-                                          Icon(Icons.error),
-                                    );
-                                  })
-                            ],
-                          ),
+                            ),
+                            Divider(
+                              indent: 10,
+                              endIndent: 10,
+                              thickness: 2,
+                            ),
+                            SizedBox(
+                              height: 50,
+                            ),
+                            GridView.builder(
+                                physics: NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2,
+                                        childAspectRatio: 1,
+                                        crossAxisSpacing: 5),
+                                itemCount:
+                                    controller.user['thumbnails'].length,
+                                itemBuilder: (context, index) {
+                                  String thumbnail =
+                                      controller.user['thumbnails'][index];
+                                  return CachedNetworkImage(
+                                    fit: BoxFit.cover,
+                                    imageUrl: thumbnail,
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error),
+                                  );
+                                })
+                          ],
                         ),
                       ),
                     ));
