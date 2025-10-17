@@ -68,7 +68,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   )
                 ],
               ),
-              body:   NestedScrollView(
+              body:   controller.isLoading.value
+                  ? Center(
+                child: CircularProgressIndicator(),
+              )
+                  : NestedScrollView(
                 headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
                   return [
                     SliverOverlapAbsorber(
