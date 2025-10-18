@@ -11,7 +11,10 @@ class PostController extends GetxController{
   @override
   void onInit() {
     super.onInit();
-    _postList.bindStream(FirebaseFirestore.instance.collection("posts").snapshots().map((QuerySnapshot query){
+    _postList.bindStream(FirebaseFirestore.instance
+        .collection("posts")
+        .orderBy("datePub", descending: true)
+        .snapshots().map((QuerySnapshot query){
       List<Post> retVal  = [];
       for(var element in query.docs){
         retVal.add(Post.fromSnap(element));

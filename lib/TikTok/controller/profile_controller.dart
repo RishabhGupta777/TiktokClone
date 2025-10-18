@@ -1,10 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:tiktok_clone/TikTok/model/post.dart';
 
 class ProfileController extends GetxController{
 final Rx<Map<String, dynamic>> _user = Rx<Map<String, dynamic>>({});
 Map<String, dynamic> get user => _user.value;
+
+final Rx<List<Post>> _posts = Rx<List<Post>>([]);
+List<Post> get posts => _posts.value;
 RxBool isLoading = false.obs;
   Rx<String> _uid = "".obs;
 
@@ -24,6 +28,19 @@ RxBool isLoading = false.obs;
     for (int i = 0; i < myVideos.docs.length; i++) {
       thumbnails.add((myVideos.docs[i].data() as dynamic)['thumbnail']);
     }
+
+      _posts.bindStream(
+          FirebaseFirestore.instance
+              .collection("posts")
+              .orderBy("datePub", descending: true)
+              .where(
+          "uid", isEqualTo: _uid.value).snapshots().map((QuerySnapshot query){
+        List<Post> retVal  = [];
+        for(var element in query.docs){
+          retVal.add(Post.fromSnap(element));
+        }
+        return retVal;
+      }));
 
     DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection(
         "users").doc(_uid.value).get();

@@ -11,6 +11,7 @@ import 'package:tiktok_clone/TikTok/view/screens/edit_profile_screen.dart';
 import 'package:tiktok_clone/TikTok/view/screens/followers_screen.dart';
 import 'package:tiktok_clone/TikTok/view/screens/followings_screen.dart';
 import 'package:tiktok_clone/TikTok/view/widgets/button.dart';
+import 'package:tiktok_clone/TikTok/view/widgets/post_widget.dart';
 
 class ProfileScreen extends StatefulWidget {
   String uid;
@@ -276,7 +277,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: TabBarView(
                     children:[
                       /// Posts tab
-                      Center(child: Text("Coming Soon")),
+                  Padding(
+                    padding: const EdgeInsets.only(top:60.0),
+                    child: CustomScrollView(
+                    slivers: [
+                    SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                                    final data = controller.posts[index];
+                                    return PostWidget(data: data);
+                                    },
+                    childCount: controller.posts.length,
+                                    ),
+                                  ),
+                    ]),
+                  ),
 
 
                       /// Videos tab (placeholder)
