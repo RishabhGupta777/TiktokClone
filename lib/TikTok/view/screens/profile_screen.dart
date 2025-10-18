@@ -187,17 +187,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                     ],
                                                   ),
                                                 ),
-                                                /*SizedBox(width: 25,),
-                                                            Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(controller.user['likes'] , style: TextStyle(fontSize: 20 , fontWeight: FontWeight.w700),),
-                                    SizedBox(height:2,),
-                                    Text("Likes" , style: TextStyle(fontSize: 14 , fontWeight: FontWeight.w400))
-                                  ],
-                                                            ),
-                                                            */
+
                                               ],
                                             ),
                                           ],
