@@ -11,7 +11,7 @@ class ChatProvider with ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  User? loggedInUser;
+  String?  loggedInUser;
   bool? isMe;
   String? messageText;
   String? userProfileUrl;
@@ -31,13 +31,16 @@ class ChatProvider with ChangeNotifier {
   final Map<String, bool> selectedOwnership = {}; // id → isMe
 
   ChatProvider() {
-    getCurrentUser();
+    // ✅ Automatically handle login/logout
+    FirebaseAuth.instance.authStateChanges().listen((user) {
+      if (user != null) {
+        loggedInUser = user.uid;
+      } else {
+        loggedInUser = null;
+      }
+    });
   }
 
-  void getCurrentUser() {
-    loggedInUser = _auth.currentUser;
-    notifyListeners();
-  }
 
   Future<void> fetchUserInfo(String receiver) async {
     DocumentSnapshot userDoc =
@@ -104,7 +107,7 @@ class ChatProvider with ChangeNotifier {
 
 
   Future<void> sendMessage(String receiver, {List<XFile>? mediaFiles}) async {
-    final senderUid = loggedInUser?.uid ?? '';
+    final senderUid = loggedInUser ?? '';
     final chatRoomId = getChatRoomId(senderUid, receiver);
     final chatRoomRef = _firestore.collection('ChatRoom').doc(chatRoomId);
 
@@ -164,7 +167,7 @@ class ChatProvider with ChangeNotifier {
 
 
   Future<void> deleteMessages(String receiver) async {
-    final senderUid = loggedInUser?.uid ?? '';
+    final senderUid = loggedInUser ?? '';
     final chatRoomId = getChatRoomId(senderUid, receiver);
     final chatsRef = _firestore.collection('ChatRoom').doc(chatRoomId).collection('chats');
 
@@ -175,7 +178,7 @@ class ChatProvider with ChangeNotifier {
   }
 
   Future<void> deleteForMe(String receiver) async {
-    final senderUid = loggedInUser?.uid ?? '';
+    final senderUid = loggedInUser ?? '';
     final chatRoomId = getChatRoomId(senderUid, receiver);
     final chatsRef =
     _firestore.collection('ChatRoom').doc(chatRoomId).collection('chats');
@@ -190,7 +193,7 @@ class ChatProvider with ChangeNotifier {
 
 
   Future<void> markMessageAsRead(String messageId,String receiver) async {
-    final senderUid = loggedInUser?.uid ?? '';
+    final senderUid = loggedInUser ?? '';
     final chatRoomId = getChatRoomId(senderUid, receiver);
     await _firestore.collection('ChatRoom').doc(chatRoomId).collection('chats').doc(messageId).update({
       'isRead': true,

@@ -14,7 +14,7 @@ class MessageStream extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final chatProvider = Provider.of<ChatProvider>(context, listen: false);
-    final currentUser = chatProvider.loggedInUser?.uid ?? "";
+    final currentUser = chatProvider.loggedInUser ?? "";
 
     // Generate same chatRoomId as in ChatProvider
     String getChatRoomId(String user1, String user2) {
